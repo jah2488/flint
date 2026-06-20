@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 416" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif" role="img" aria-label="prose and code reduction by skill: caveman leads prose, ponytail leads code, flint is second in both"><style>.lbl{fill:#6b7280;font-size:13px}.sub{fill:#6b7280;font-size:13px;font-weight:700}.val{fill:#9aa0a6;font-size:12px}.bfv{fill:#d4500f;font-size:12px;font-weight:700}.cap{fill:#9aa0a6;font-size:11px}.hd{fill:#374151;font-size:15px;font-weight:700}</style>
+<text x="20" y="26" class="hd">A specialist wins its line; flint wins both</text>
+<text x="20" y="44" class="cap">reduction vs baseline (no skill). caveman leads prose, ponytail leads code; flint is second in both.</text>
+<text x="20" y="74" class="sub">Prose · token reduction vs baseline</text>
+<text x="140" y="101" text-anchor="end" class="lbl">caveman</text><rect x="150" y="86" width="232" height="22" rx="4" fill="#0f766e"/><text x="390" y="101" class="val">−50%</text>
+<text x="140" y="135" text-anchor="end" class="bfv">flint</text><rect x="150" y="120" width="153" height="22" rx="4" fill="#d4500f"/><text x="311" y="135" class="bfv">−33%</text>
+<text x="140" y="169" text-anchor="end" class="lbl">ponytail</text><rect x="150" y="154" width="88" height="22" rx="4" fill="#7c3aed"/><text x="246" y="169" class="val">−19%</text>
+<text x="140" y="203" text-anchor="end" class="lbl">baseline (no skill)</text><rect x="150" y="188" width="0" height="22" rx="4" fill="#b4b9c0"/><text x="158" y="203" class="val">0% (no skill)</text>
+<text x="20" y="238" class="sub">Code · LOC reduction vs baseline</text>
+<text x="140" y="265" text-anchor="end" class="lbl">ponytail</text><rect x="150" y="250" width="330" height="22" rx="4" fill="#7c3aed"/><text x="488" y="265" class="val">−71%</text>
+<text x="140" y="299" text-anchor="end" class="bfv">flint</text><rect x="150" y="284" width="297" height="22" rx="4" fill="#d4500f"/><text x="455" y="299" class="bfv">−64%</text>
+<text x="140" y="333" text-anchor="end" class="lbl">caveman</text><rect x="150" y="318" width="135" height="22" rx="4" fill="#0f766e"/><text x="293" y="333" class="val">−29%</text>
+<text x="140" y="367" text-anchor="end" class="lbl">baseline (no skill)</text><rect x="150" y="352" width="0" height="22" rx="4" fill="#b4b9c0"/><text x="158" y="367" class="val">0% (no skill)</text>
+<text x="20" y="410" class="cap">claude-haiku-4-5, n=20 median, correctness-gated. each skill at default intensity; only the skill text differs between arms.</text></svg>

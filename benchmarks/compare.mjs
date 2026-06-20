@@ -60,7 +60,8 @@ console.error("compare:", data.map((d) => `${d.arm} prose ${d.prose}% / code ${d
 // ---- scatter: x = code-LOC reduction, y = prose-token reduction (both higher = better) ----
 const FONT = "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif";
 const LABEL = { baseline: "baseline (no skill)", caveman: "caveman", ponytail: "ponytail", flint: "flint" };
-const COLOR = { flint: "#d97706", caveman: "#0f766e", ponytail: "#7c3aed", baseline: "#9aa0a6" };
+const COLOR = { flint: "#d4500f", caveman: "#0f766e", ponytail: "#7c3aed", baseline: "#b4b9c0" };
+const byId = Object.fromEntries(data.map((d) => [d.arm, d]));
 
 const all = data.flatMap((d) => [d.code, d.prose]);
 const lo = Math.min(0, ...all), hi = Math.max(10, ...all);
@@ -100,3 +101,39 @@ ${pts.join("\n")}
 <text x="20" y="${H - 6}" class="cap">claude-haiku-4-5, ${rows.filter((r) => r.arm === "flint").length / TASKS.length || "n"}≈reps/cell median, correctness-gated. each skill at default intensity; only delta is the skill text.</text></svg>`;
 writeFileSync(join(HERE, "..", "assets", "compare.svg"), svg);
 console.error("wrote assets/compare.svg");
+
+// ---- bar chart: same horizontal-bar design as benchmark.svg, two panels (prose, code). Each panel
+// is sorted by reduction so flint lands second in both: caveman tops prose, ponytail tops code, flint
+// is the consistent runner-up. The all-rounder reads at a glance. ----
+const maxRed = Math.max(...data.flatMap((d) => [d.prose, d.code]), 1);
+const BX0 = 150, BPW = 330, barH = 22, rowH = 34;
+const panels = [
+  { key: "prose", title: "Prose · token reduction vs baseline" },
+  { key: "code", title: "Code · LOC reduction vs baseline" },
+];
+const blocks = [];
+let by = 74;
+for (const panel of panels) {
+  blocks.push(`<text x="20" y="${by}" class="sub">${panel.title}</text>`);
+  by += 12;
+  for (const d of [...data].sort((a, b) => b[panel.key] - a[panel.key])) {
+    const red = d[panel.key];
+    const w = Math.max(Math.round((red / maxRed) * BPW), red > 0 ? 3 : 0);
+    const skill = d.arm === "flint";
+    blocks.push(
+      `<text x="${BX0 - 10}" y="${by + barH - 7}" text-anchor="end" class="${skill ? "bfv" : "lbl"}">${LABEL[d.arm]}</text>` +
+        `<rect x="${BX0}" y="${by}" width="${w}" height="${barH}" rx="4" fill="${COLOR[d.arm]}"/>` +
+        `<text x="${BX0 + w + 8}" y="${by + barH - 7}" class="${skill ? "bfv" : "val"}">${red > 0 ? `−${red}%` : "0% (no skill)"}</text>`,
+    );
+    by += rowH;
+  }
+  by += 16;
+}
+const BH = by + 14;
+const bsvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 ${BH}" font-family="${FONT}" role="img" aria-label="prose and code reduction by skill: caveman leads prose, ponytail leads code, flint is second in both"><style>.lbl{fill:#6b7280;font-size:13px}.sub{fill:#6b7280;font-size:13px;font-weight:700}.val{fill:#9aa0a6;font-size:12px}.bfv{fill:#d4500f;font-size:12px;font-weight:700}.cap{fill:#9aa0a6;font-size:11px}.hd{fill:#374151;font-size:15px;font-weight:700}</style>
+<text x="20" y="26" class="hd">A specialist wins its line; flint wins both</text>
+<text x="20" y="44" class="cap">reduction vs baseline (no skill). caveman leads prose, ponytail leads code; flint is second in both.</text>
+${blocks.join("\n")}
+<text x="20" y="${BH - 6}" class="cap">claude-haiku-4-5, n=20 median, correctness-gated. each skill at default intensity; only the skill text differs between arms.</text></svg>`;
+writeFileSync(join(HERE, "..", "assets", "compare-bars.svg"), bsvg);
+console.error("wrote assets/compare-bars.svg");

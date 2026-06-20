@@ -22,8 +22,8 @@
 <rect x="70" y="56" width="470" height="320" fill="none" stroke="#d8d8d8"/>
 <text transform="translate(18,216) rotate(-90)" text-anchor="middle" class="ax">prose-token reduction</text>
 <text x="305" y="412" text-anchor="middle" class="ax">code-LOC reduction</text>
-<circle cx="70" cy="376" r="6" fill="#9aa0a6"/><text x="81" y="380" text-anchor="start" class="lbl" fill="#9aa0a6">baseline (no skill) (code 0%, prose 0%)</text>
+<circle cx="70" cy="376" r="6" fill="#b4b9c0"/><text x="81" y="380" text-anchor="start" class="lbl" fill="#b4b9c0">baseline (no skill) (code 0%, prose 0%)</text>
 <circle cx="261.9718309859155" cy="150.64788732394368" r="6" fill="#0f766e"/><text x="272.9718309859155" y="154.64788732394368" text-anchor="start" class="lbl" fill="#0f766e">caveman (code 29%, prose 50%)</text>
 <circle cx="540" cy="290.3661971830986" r="6" fill="#7c3aed"/><text x="529" y="294.3661971830986" text-anchor="end" class="lbl" fill="#7c3aed">ponytail (code 71%, prose 19%)</text>
-<circle cx="493.6619718309859" cy="227.26760563380282" r="9" fill="#d97706"/><text x="482.6619718309859" y="231.26760563380282" text-anchor="end" class="fv" fill="#d97706">flint (code 64%, prose 33%)</text>
+<circle cx="493.6619718309859" cy="227.26760563380282" r="9" fill="#d4500f"/><text x="482.6619718309859" y="231.26760563380282" text-anchor="end" class="fv" fill="#d4500f">flint (code 64%, prose 33%)</text>
 <text x="20" y="430" class="cap">claude-haiku-4-5, 20≈reps/cell median, correctness-gated. each skill at default intensity; only delta is the skill text.</text></svg>

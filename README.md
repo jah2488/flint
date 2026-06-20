@@ -178,6 +178,13 @@ tasks.
   <img src="assets/compare.svg" alt="scatter of code-LOC reduction vs prose-token reduction: caveman high on prose only, ponytail high on code only, flint high on both, baseline at the origin" width="600">
 </p>
 
+Split by family, the same data shows flint as the consistent runner-up: caveman tops prose, ponytail
+tops code, and flint sits second in both.
+
+<p align="center">
+  <img src="assets/compare-bars.svg" alt="horizontal bars of prose-token and code-LOC reduction per skill: caveman leads prose, ponytail leads code, flint is second in both panels" width="600">
+</p>
+
 Each specialist owns one axis. caveman cuts prose tokens **50%** and gets 29% on code. ponytail cuts
 code **71%** and gets 19% on prose. flint lands at **33% prose and 64% code**: a few points behind
 each specialist on its own axis, and the only arm strong on both at once. A specialist wins its line;
