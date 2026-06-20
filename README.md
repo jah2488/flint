@@ -18,7 +18,7 @@ It fuses four existing ideas into one cohesive mode so you don't have to juggle 
 
 | edge | from | what it does |
 |------|------|--------------|
-| **Talk lean** | [caveman](https://github.com/juliusbrussee/caveman) | Leaner output. Drops filler, keeps code/errors/commands verbatim. ~40% fewer prose tokens in the benchmark below. |
+| **Talk lean** | [caveman](https://github.com/juliusbrussee/caveman) | Leaner output. Drops filler, keeps code/errors/commands verbatim. Cuts prose tokens ~50% on its own in the benchmark below. |
 | **Build only what's needed** | [ponytail](https://github.com/DietrichGebert/ponytail) | A decision ladder runs *before* any code: YAGNI → stdlib → native → installed dep → one line → minimum. |
 | **Build right** | [eng-audit](https://github.com/jah2488/eng-audit) | Nine engineering principles applied while building, plus a phase-boundary audit. |
 | **Claim only what's proven** | [ultravalidate](https://github.com/jah2488/ultravalidate) | Refute-don't-confirm reflex before any result, number, or PR claim. |
@@ -165,6 +165,31 @@ reproduce and re-run the stats in [`benchmarks/`](benchmarks/).
 | slugify | 13 | 13 | 9.5 | −27% |
 | csv-sum | 24 | 15 | 8 | −66% |
 | date-input | 25 | 10 | 2 | −92% |
+
+### Why not just caveman or just ponytail?
+
+flint fuses two existing skills: [caveman](https://github.com/juliusbrussee/caveman) for prose
+compression and [ponytail](https://github.com/DietrichGebert/ponytail) for the minimal-code ladder.
+The fair question is whether the fusion loses to either specialist on its home turf. I ran both,
+verbatim from their published `SKILL.md` at default intensity, as their own arms on the same seven
+tasks.
+
+<p align="center">
+  <img src="assets/compare.svg" alt="scatter of code-LOC reduction vs prose-token reduction: caveman high on prose only, ponytail high on code only, flint high on both, baseline at the origin" width="600">
+</p>
+
+Each specialist owns one axis. caveman cuts prose tokens **50%** and gets 29% on code. ponytail cuts
+code **71%** and gets 19% on prose. flint lands at **33% prose and 64% code**: a few points behind
+each specialist on its own axis, and the only arm strong on both at once. A specialist wins its line;
+flint wins the plane.
+
+The trade is explicit. You give up about 17 points of peak prose compression to caveman and about 7
+points of code reduction to ponytail. In return you run one skill that does both, and it carries the
+two things neither specialist has: the engineering principles and the refute-before-you-report
+validation.
+
+_caveman `25d22f8`, ponytail `0403c4d`, both MIT, each at default intensity; the only delta between
+arms is the skill text. Vendored copies and provenance in [`benchmarks/skills/`](benchmarks/skills/)._
 
 ### It holds across models, and gets stronger on better ones
 

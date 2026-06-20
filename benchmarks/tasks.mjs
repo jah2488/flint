@@ -117,6 +117,11 @@ export const BASE =
 export const ARMS = {
   baseline: BASE,
   terse: `${BASE}\n\nAnswer concisely.`,
+  // The two skills flint draws from, run verbatim from vendored SKILL.md (see skills/SOURCES.md) so
+  // the README can answer "why flint instead of just caveman / just ponytail?" with numbers. null
+  // here; run.mjs builds them (externalSkillBody) like the flint arms below.
+  caveman: null,
+  ponytail: null,
   // The flint arms = BASE + the live SKILL.md body (+ an intensity directive for lite/ultra).
   // run.mjs builds them (see flintBody) so they always reflect the current skill; these are null
   // on purpose, only the keys drive the arm list. `flint` is the default (full) intensity.

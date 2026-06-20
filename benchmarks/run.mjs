@@ -53,11 +53,21 @@ function flintBody(level) {
   return `${BASE}\n\n${body}${dir}`;
 }
 
+// Build a comparison arm from a vendored external skill (caveman, ponytail). Same construction as
+// flintBody (BASE + SKILL.md body, frontmatter stripped, default intensity) so the only delta
+// between arms is the skill text. Sources + commits are in skills/SOURCES.md.
+function externalSkillBody(name) {
+  const raw = readFileSync(join(HERE, "skills", `${name}.md`), "utf8");
+  const body = raw.replace(/^---\n[\s\S]*?\n---\n/, "").trim();
+  return `${BASE}\n\n${body}`;
+}
+
 function systemPromptFor(arm) {
   if (arm === "flint") return flintBody("full");
   if (arm === "flint-lite") return flintBody("lite");
   if (arm === "flint-ultra") return flintBody("ultra");
   if (arm === "flint-feral") return flintBody("feral");
+  if (arm === "caveman" || arm === "ponytail") return externalSkillBody(arm);
   return ARMS[arm];
 }
 

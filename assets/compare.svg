@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 436" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif" role="img" aria-label="flint is the only arm with both high code-LOC reduction and high prose-token reduction; caveman wins prose only, ponytail wins code only"><style>.lbl{font-size:12px}.fv{font-size:12px;font-weight:700}.cap{fill:#9aa0a6;font-size:10px}.sub{fill:#374151;font-size:15px;font-weight:700}.ax{fill:#6b7280;font-size:11px}</style>
+<text x="20" y="26" class="sub">Why not just caveman or just ponytail?</text>
+<text x="20" y="44" class="cap">reduction vs baseline, higher = better. caveman cuts prose, ponytail cuts code; only flint does both at once.</text>
+<line x1="70" y1="56" x2="70" y2="376" stroke="#eee"/>
+<text x="70" y="391" text-anchor="middle" class="cap">0%</text>
+<line x1="70" y1="376" x2="540" y2="376" stroke="#eee"/>
+<text x="62" y="380" text-anchor="end" class="cap">0%</text>
+<line x1="202.3943661971831" y1="56" x2="202.3943661971831" y2="376" stroke="#eee"/>
+<text x="202.3943661971831" y="391" text-anchor="middle" class="cap">20%</text>
+<line x1="70" y1="285.85915492957747" x2="540" y2="285.85915492957747" stroke="#eee"/>
+<text x="62" y="289.85915492957747" text-anchor="end" class="cap">20%</text>
+<line x1="334.7887323943662" y1="56" x2="334.7887323943662" y2="376" stroke="#eee"/>
+<text x="334.7887323943662" y="391" text-anchor="middle" class="cap">40%</text>
+<line x1="70" y1="195.7183098591549" x2="540" y2="195.7183098591549" stroke="#eee"/>
+<text x="62" y="199.7183098591549" text-anchor="end" class="cap">40%</text>
+<line x1="467.1830985915493" y1="56" x2="467.1830985915493" y2="376" stroke="#eee"/>
+<text x="467.1830985915493" y="391" text-anchor="middle" class="cap">60%</text>
+<line x1="70" y1="105.5774647887324" x2="540" y2="105.5774647887324" stroke="#eee"/>
+<text x="62" y="109.5774647887324" text-anchor="end" class="cap">60%</text>
+<line x1="70" y1="56" x2="70" y2="376" stroke="#cbd0d6"/>
+<line x1="70" y1="376" x2="540" y2="376" stroke="#cbd0d6"/>
+<rect x="70" y="56" width="470" height="320" fill="none" stroke="#d8d8d8"/>
+<text transform="translate(18,216) rotate(-90)" text-anchor="middle" class="ax">prose-token reduction</text>
+<text x="305" y="412" text-anchor="middle" class="ax">code-LOC reduction</text>
+<circle cx="70" cy="376" r="6" fill="#9aa0a6"/><text x="81" y="380" text-anchor="start" class="lbl" fill="#9aa0a6">baseline (no skill) (code 0%, prose 0%)</text>
+<circle cx="261.9718309859155" cy="150.64788732394368" r="6" fill="#0f766e"/><text x="272.9718309859155" y="154.64788732394368" text-anchor="start" class="lbl" fill="#0f766e">caveman (code 29%, prose 50%)</text>
+<circle cx="540" cy="290.3661971830986" r="6" fill="#7c3aed"/><text x="529" y="294.3661971830986" text-anchor="end" class="lbl" fill="#7c3aed">ponytail (code 71%, prose 19%)</text>
+<circle cx="493.6619718309859" cy="227.26760563380282" r="9" fill="#d97706"/><text x="482.6619718309859" y="231.26760563380282" text-anchor="end" class="fv" fill="#d97706">flint (code 64%, prose 33%)</text>
+<text x="20" y="430" class="cap">claude-haiku-4-5, 20≈reps/cell median, correctness-gated. each skill at default intensity; only delta is the skill text.</text></svg>
