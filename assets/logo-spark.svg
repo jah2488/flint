@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="flint logo: a struck flint block throwing a spark">
+  <!-- flint block: a clean isometric cube, three faces meeting at the front vertex -->
+  <g stroke="#5b616b" stroke-width="2" stroke-linejoin="round">
+    <polygon points="60,18 98,40 60,62 22,40" fill="#c9ced4"/><!-- top -->
+    <polygon points="22,40 60,62 60,104 22,82" fill="#9aa0a6"/><!-- left -->
+    <polygon points="60,62 98,40 98,82 60,104" fill="#6b7280"/><!-- right -->
+  </g>
+  <!-- spark struck off the top edge -->
+  <path d="M90,5 L94,15 L104,18 L94,21 L90,31 L86,21 L76,18 L86,15 Z" fill="#d4500f"/>
+  <path d="M105,28 L107,34 L113,36 L107,38 L105,44 L103,38 L97,36 L103,34 Z" fill="#ff7a3c"/>
+</svg>

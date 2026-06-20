@@ -1,0 +1,4 @@
+node_modules/
+*.scored.json
+snapshots/smoke*.json
+.DS_Store

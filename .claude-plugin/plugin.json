@@ -1,0 +1,22 @@
+{
+  "name": "flint",
+  "version": "0.2.0",
+  "description": "One operating mode for a coding agent: say less, build less, claim less, build right. Fuses terse output, a minimal-code ladder, nine engineering principles, and a refute-don't-confirm validation reflex.",
+  "author": {
+    "name": "Justin Herrick"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/src/hooks/flint-activate.js\"",
+            "timeout": 5,
+            "statusMessage": "Striking flint..."
+          }
+        ]
+      }
+    ]
+  }
+}

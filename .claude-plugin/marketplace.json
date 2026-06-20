@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "flint",
+  "description": "Say less, build less, claim less, build right. A single operating mode for coding agents.",
+  "owner": {
+    "name": "Justin Herrick"
+  },
+  "plugins": [
+    {
+      "name": "flint",
+      "description": "Terse output + minimal-code ladder + nine engineering principles + refute-don't-confirm validation, fused into one standing mode.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

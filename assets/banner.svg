@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 150" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif" role="img" aria-label="flint: say less, build less, claim less, build right">
+  <!-- mark: struck flint block (isometric cube) + spark -->
+  <g transform="translate(28,22) scale(0.86)">
+    <g stroke="#5b616b" stroke-width="2" stroke-linejoin="round">
+      <polygon points="60,18 98,40 60,62 22,40" fill="#c9ced4"/>
+      <polygon points="22,40 60,62 60,104 22,82" fill="#9aa0a6"/>
+      <polygon points="60,62 98,40 98,82 60,104" fill="#6b7280"/>
+    </g>
+    <path d="M90,5 L94,15 L104,18 L94,21 L90,31 L86,21 L76,18 L86,15 Z" fill="#d4500f"/>
+    <path d="M105,28 L107,34 L113,36 L107,38 L105,44 L103,38 L97,36 L103,34 Z" fill="#ff7a3c"/>
+  </g>
+  <!-- wordmark + tagline -->
+  <text x="166" y="86" font-size="62" font-weight="800" letter-spacing="-2" fill="#d4500f">flint</text>
+  <text x="170" y="116" font-size="17" fill="#6b7280">say less · build less · claim less · build right</text>
+</svg>

@@ -1,0 +1,961 @@
+{
+  "metadata": {
+    "generated_at": "2026-06-19T23:02:11.989Z",
+    "model": "claude-haiku-4-5",
+    "reps": 5,
+    "arms": [
+      "baseline",
+      "terse",
+      "flint"
+    ],
+    "n_tasks": 7,
+    "method": "claude -p, REPLACED system prompt per arm, no tools (--allowed-tools ''). Size metric = tiktoken o200k_base tokens of the final .result text (NOT usage.output_tokens, which the agent loop inflates). flint arm = base + SKILL.md body."
+  },
+  "records": [
+    {
+      "task": "email-validate",
+      "arm": "baseline",
+      "rep": 0,
+      "loop_output_tokens": 793,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return typeof s === 'string' && emailRegex.test(s) && s.length <= 254;\n}\n```\n\nThis validates:\n- String type check\n- At least one character before `@`\n- At least one character between `@` and `.`\n- At least one character after `.` (domain extension)\n- No whitespace in the address\n- Length under 254 chars (RFC 5321 limit)\n\nExamples:\n```javascript\nisValidEmail('user@example.com')        // true\nisValidEmail('invalid.email@.com')      // false\nisValidEmail('no-at-sign.com')          // false\nisValidEmail('spaces @example.com')     // false\nisValidEmail(null)                      // false\n```\n\nIf you need stricter RFC 5322 compliance, that requires a much more complex regex, but this covers 99% of practical cases."
+    },
+    {
+      "task": "email-validate",
+      "arm": "baseline",
+      "rep": 1,
+      "loop_output_tokens": 832,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;\n  return emailRegex.test(s);\n}\n```\n\nThis regex checks for:\n- **Local part** (`[a-zA-Z0-9._%-]+`): one or more alphanumeric characters, dots, underscores, percent signs, or hyphens\n- **@ symbol** \n- **Domain** (`[a-zA-Z0-9.-]+`): alphanumeric characters, dots, or hyphens\n- **TLD** (`\\.[a-zA-Z]{2,}$`): a dot followed by at least 2 letters\n\nExamples:\n```javascript\nisValidEmail(\"user@example.com\")        // true\nisValidEmail(\"john.doe@company.co.uk\")  // true\nisValidEmail(\"test+tag@domain.org\")     // true\nisValidEmail(\"invalid@.com\")            // false\nisValidEmail(\"missing@domain\")          // false\nisValidEmail(\"no-at-sign.com\")          // false\nisValidEmail(\"spaces in@email.com\")     // false\n```\n\n**Note:** Perfect email validation per RFC 5322 is complex. This solution handles ~95% of real-world addresses. For production code that needs to verify an email is actually in use, send a confirmation link instead of relying on regex alone."
+    },
+    {
+      "task": "email-validate",
+      "arm": "baseline",
+      "rep": 2,
+      "loop_output_tokens": 703,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return emailRegex.test(s);\n}\n```\n\nThis function:\n- Checks for at least one character before the `@`\n- Requires an `@` symbol\n- Requires a domain name after `@`\n- Requires a dot and top-level domain (`.` followed by at least one character)\n- Rejects whitespace anywhere in the string\n\nIf you need stricter RFC 5322 compliance, here's a more comprehensive version:\n\n```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;\n  return emailRegex.test(s);\n}\n```\n\nThis additionally:\n- Restricts local part (before `@`) to alphanumeric, dots, underscores, percent, hyphen\n- Requires domain to have at least 2-letter TLD\n- Disallows consecutive dots\n\nFor a production system, consider using a library like `email-validator` or sending a confirmation email, since even strict regexes can't catch all invalid addresses (typos, closed domains, etc.)."
+    },
+    {
+      "task": "email-validate",
+      "arm": "baseline",
+      "rep": 3,
+      "loop_output_tokens": 1100,
+      "num_turns": 1,
+      "error": null,
+      "result": "Here's a practical implementation using regex:\n\n```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return emailRegex.test(s);\n}\n```\n\nThis validates the basic structure: local-part@domain.tld with no whitespace.\n\n**If you need stricter validation** (allowing only common characters):\n\n```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;\n  return emailRegex.test(s);\n}\n```\n\nThis enforces:\n- Alphanumeric, dots, underscores, hyphens, percent in local part\n- Valid domain name format\n- TLD is at least 2 letters\n\n**Real talk:** Perfect email validation requires checking the actual mailbox exists. The RFC 5322 spec is notoriously complex. For most purposes, the second option above is sufficient. For production, consider validating with a confirmation email or using a library like `email-validator`.\n\nTest cases for the stricter version:\n- `valid.email@example.com` → true\n- `user+tag@domain.co.uk` → false (+ not allowed in this regex)\n- `invalid@domain` → false (no TLD)\n- `invalid..email@domain.com` → false (consecutive dots)\n- `@domain.com` → false (no local part)"
+    },
+    {
+      "task": "email-validate",
+      "arm": "baseline",
+      "rep": 4,
+      "loop_output_tokens": 680,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return emailRegex.test(s);\n}\n```\n\nThis uses a simple regex pattern that checks for:\n- One or more characters that aren't whitespace or `@`\n- An `@` symbol\n- One or more characters that aren't whitespace or `@`\n- A dot\n- One or more characters that aren't whitespace or `@`\n\nFor stricter validation (domain must have valid TLD, etc.):\n\n```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;\n  return emailRegex.test(s);\n}\n```\n\nThis pattern requires:\n- Alphanumeric, dots, underscores, percent, or hyphens before `@`\n- Domain with alphanumeric, dots, or hyphens\n- TLD with at least 2 letters\n\nIf you need RFC 5322 compliance (very strict), you'd need a much more complex regex or a dedicated library. For most practical purposes, the second version above catches valid emails without false positives."
+    },
+    {
+      "task": "email-validate",
+      "arm": "terse",
+      "rep": 0,
+      "loop_output_tokens": 1069,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction isValidEmail(s) {\n  const regex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return regex.test(s);\n}\n```\n\nThis regex checks for:\n- One or more characters that aren't whitespace or `@`\n- An `@` symbol\n- One or more characters that aren't whitespace or `@`\n- A dot\n- One or more characters that aren't whitespace or `@`\n\nIt handles most common email formats. For stricter validation (e.g., requiring specific TLD length or character sets):\n\n```javascript\nfunction isValidEmail(s) {\n  const regex = /^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;\n  return regex.test(s);\n}\n```\n\nPerfect email validation per RFC 5322 is extremely complex; these practical versions cover 99% of real-world use cases."
+    },
+    {
+      "task": "email-validate",
+      "arm": "terse",
+      "rep": 1,
+      "loop_output_tokens": 877,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return typeof s === 'string' && emailRegex.test(s);\n}\n```\n\nThis validates the basic structure: local part @ domain . TLD, with no whitespace or missing sections.\n\n**More comprehensive version** (handles common edge cases better):\n\n```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;\n  return typeof s === 'string' && emailRegex.test(s);\n}\n```\n\nThis adds:\n- Specific allowed characters in local part (alphanumeric, dot, underscore, percent, hyphen)\n- Hyphen support in domain\n- TLD must be 2+ letters\n\n**Note:** Perfect email validation requires sending a confirmation email (the only bulletproof check per RFC 5322). These regexes handle ~95% of real-world cases. Full RFC compliance needs a library like `email-validator`."
+    },
+    {
+      "task": "email-validate",
+      "arm": "terse",
+      "rep": 2,
+      "loop_output_tokens": 794,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return typeof s === 'string' && emailRegex.test(s);\n}\n```\n\nThis checks that the input:\n- Is a string\n- Has at least one character before `@` (no whitespace or `@`)\n- Has `@` followed by at least one character\n- Has a dot after the domain with at least one character after it\n\nFor stricter validation (disallow some edge cases like consecutive dots or leading/trailing dots):\n\n```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;\n  return typeof s === 'string' && emailRegex.test(s);\n}\n```\n\nThis requires:\n- Local part (before `@`): letters, numbers, dots, underscores, percent, hyphen\n- Domain: letters, numbers, dots, hyphens\n- TLD: 2+ letters\n\nThe first version is more lenient; the second catches invalid formats like `user@domain` or `user@.com`. Pick based on your use case. Note that true RFC 5322 compliance is complex—if you need that, consider a library like `email-validator`."
+    },
+    {
+      "task": "email-validate",
+      "arm": "terse",
+      "rep": 3,
+      "loop_output_tokens": 854,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return typeof s === 'string' && emailRegex.test(s);\n}\n```\n\nThis checks that:\n- Input is a string\n- Contains exactly one `@`\n- Has non-whitespace characters before and after the `@`\n- Has a dot (.) in the domain portion\n\nFor stricter validation that ensures a more standard format:\n\n```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;\n  return typeof s === 'string' && emailRegex.test(s);\n}\n```\n\nThis additionally requires:\n- Local part: alphanumeric, dots, underscores, percent, hyphen\n- Domain: alphanumeric, dots, hyphens\n- TLD: at least 2 letters\n\n**Note:** Perfect email validation per RFC 5322 is complex. These patterns handle ~99% of real-world cases. For production, consider validating by sending a confirmation email instead."
+    },
+    {
+      "task": "email-validate",
+      "arm": "terse",
+      "rep": 4,
+      "loop_output_tokens": 472,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return emailRegex.test(s);\n}\n```\n\nThis simple pattern checks for:\n- At least one character before `@` (no spaces or `@`)\n- An `@` symbol\n- At least one character, then a dot, then at least one character after (domain and TLD)\n\n**If you need stricter validation**, use this more comprehensive version:\n\n```javascript\nfunction isValidEmail(s) {\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[a-zA-Z]{2,}$/;\n  return emailRegex.test(s);\n}\n```\n\nThis additionally requires the TLD to be 2+ alphabetic characters.\n\n**Important caveat:** No regex perfectly validates email per RFC 5322 (which is huge). The patterns above cover ~95% of real-world cases. True validation requires sending a confirmation email to verify the address actually works."
+    },
+    {
+      "task": "email-validate",
+      "arm": "flint",
+      "rep": 0,
+      "loop_output_tokens": 744,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction isValidEmail(s) {\n  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(s);\n}\n```\n\nChecks for: non-empty local part, `@`, non-empty domain, and a dot in the domain. Covers ~99% of real emails. Swap the regex for `/.+@.+\\..+/` if you need to be even more permissive (allows spaces in local part, which RFC allows but most services reject); use `/.+@.+/` if you only care that `@` exists."
+    },
+    {
+      "task": "email-validate",
+      "arm": "flint",
+      "rep": 1,
+      "loop_output_tokens": 837,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction isValidEmail(s) {\n  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(s);\n}\n```\n\nChecks: character(s) before `@`, at least one `@`, non-whitespace characters after `@`, a dot, and a non-empty TLD. Skipped: RFC 5322 compliance (too restrictive for real use), quoted strings, IP addresses. Add those if you need to validate edge cases; for typical user input this is sufficient."
+    },
+    {
+      "task": "email-validate",
+      "arm": "flint",
+      "rep": 2,
+      "loop_output_tokens": 676,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction isValidEmail(s) {\n  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(s);\n}\n```\n\nCatches most cases: non-empty local part, `@`, non-empty domain, dot, TLD. Skipped: RFC 5322 strictness (unworkably complex regex), plus-addressing, unicode domains. Add when you need those or when the backend validates before accepting signups anyway.\n\nFor production: send a confirmation email (the only real validator)."
+    },
+    {
+      "task": "email-validate",
+      "arm": "flint",
+      "rep": 3,
+      "loop_output_tokens": 902,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction isValidEmail(s) {\n  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(s);\n}\n```\n\nChecks: something before `@`, `@` present, something after `@`, at least one `.` with text on both sides, no spaces.\n\nSkipped: strict RFC 5322 (unreasonably complex), built-in HTML5 validation (not available in Node), DNS lookup (network-bound). Add when you need to verify the domain actually exists or enforce precise spec compliance; this covers the practical 99% of real emails."
+    },
+    {
+      "task": "email-validate",
+      "arm": "flint",
+      "rep": 4,
+      "loop_output_tokens": 787,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction isValidEmail(s) {\n  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(s);\n}\n```\n\n**Skipped:** RFC 5321-compliant validation (hundreds of edge cases; impossible without sending confirmation). Use this regex for \"looks reasonable\" checks; if you need true validation, send a confirmation email.\n\nThe pattern catches obvious invalids (missing `@`, no domain, no TLD) without false-negatives on legitimate addresses like `first.last+tag@sub.domain.co.uk`."
+    },
+    {
+      "task": "slugify",
+      "arm": "baseline",
+      "rep": 0,
+      "loop_output_tokens": 1855,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction slugify(title) {\n  return title\n    .toLowerCase()\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')  // Remove punctuation\n    .replace(/\\s+/g, '-')       // Replace spaces with hyphens\n    .replace(/-+/g, '-')        // Collapse multiple hyphens\n    .replace(/^-+|-+$/g, '');   // Remove leading/trailing hyphens\n}\n```\n\n**Examples:**\n- `slugify(\"Hello World\")` → `\"hello-world\"`\n- `slugify(\"Hello, World!\")` → `\"hello-world\"`\n- `slugify(\"  Multiple   Spaces  \")` → `\"multiple-spaces\"`\n- `slugify(\"Already-hyphenated\")` → `\"already-hyphenated\"`\n- `slugify(\"café\")` → `\"caf\"` (non-ASCII removed; use `normalize()` if you need accents handled)\n\nThe steps:\n1. `toLowerCase()` — converts to lowercase\n2. `trim()` — removes edge whitespace\n3. `replace(/[^\\w\\s-]/g, '')` — removes punctuation (keeps letters, digits, underscores, spaces, hyphens)\n4. `replace(/\\s+/g, '-')` — converts spaces to hyphens\n5. `replace(/-+/g, '-')` — collapses consecutive hyphens\n6. `replace(/^-+|-+$/g, '')` — strips leading and trailing hyphens"
+    },
+    {
+      "task": "slugify",
+      "arm": "baseline",
+      "rep": 1,
+      "loop_output_tokens": 834,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction slugify(title) {\n  return title\n    .toLowerCase()\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')  // Remove punctuation\n    .replace(/\\s+/g, '-')      // Replace whitespace with hyphens\n    .replace(/-+/g, '-')       // Collapse multiple hyphens to single\n    .replace(/^-+|-+$/g, '');  // Remove leading/trailing hyphens\n}\n```\n\n**How it works:**\n\n1. `toLowerCase()` - converts to lowercase\n2. `trim()` - removes leading/trailing whitespace\n3. `replace(/[^\\w\\s-]/g, '')` - removes punctuation (keeps word chars, spaces, and existing hyphens)\n4. `replace(/\\s+/g, '-')` - replaces one or more spaces with a single hyphen\n5. `replace(/-+/g, '-')` - collapses consecutive hyphens into one\n6. `replace(/^-+|-+$/g, '')` - strips any remaining leading or trailing hyphens\n\n**Examples:**\n\n```javascript\nslugify(\"Hello World!\")           // \"hello-world\"\nslugify(\"What's New?\")           // \"whats-new\"\nslugify(\"  My Blog Post  \")      // \"my-blog-post\"\nslugify(\"Multiple---Hyphens\")    // \"multiple-hyphens\"\nslugify(\"Café au Lait\")          // \"caf-au-lait\"\n```"
+    },
+    {
+      "task": "slugify",
+      "arm": "baseline",
+      "rep": 2,
+      "loop_output_tokens": 886,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction slugify(title) {\n  return title\n    .toLowerCase()                    // Convert to lowercase\n    .trim()                           // Remove leading/trailing whitespace\n    .replace(/[^\\w\\s-]/g, '')         // Remove punctuation (keep word chars, spaces, hyphens)\n    .replace(/[\\s_]+/g, '-')          // Replace spaces and underscores with hyphens\n    .replace(/-+/g, '-')              // Replace multiple consecutive hyphens with single\n    .replace(/^-+|-+$/g, '');         // Remove leading/trailing hyphens\n}\n```\n\n**Examples:**\n```javascript\nslugify(\"Hello, World!\")                    // \"hello-world\"\nslugify(\"My Awesome Blog Post!!!\")         // \"my-awesome-blog-post\"\nslugify(\"  Spaced  Title  \")                // \"spaced-title\"\nslugify(\"Multiple---Hyphens\")              // \"multiple-hyphens\"\nslugify(\"CamelCaseTitle\")                  // \"camelcasetitle\"\nslugify(\"Special@Characters#Here$\")        // \"specialcharactershere\"\n```\n\nThe function chains operations: lowercase → trim whitespace → strip punctuation → convert spaces/underscores to hyphens → collapse multiple hyphens → strip leading/trailing hyphens."
+    },
+    {
+      "task": "slugify",
+      "arm": "baseline",
+      "rep": 3,
+      "loop_output_tokens": 940,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction slugify(title) {\n  return title\n    .toLowerCase()\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')     // remove punctuation\n    .replace(/\\s+/g, '-')         // replace spaces with hyphens\n    .replace(/-+/g, '-')          // collapse multiple hyphens\n    .replace(/^-+|-+$/g, '');     // remove leading/trailing hyphens\n}\n```\n\n**How it works:**\n1. `.toLowerCase()` — converts to lowercase\n2. `.trim()` — strips leading/trailing whitespace\n3. `.replace(/[^\\w\\s-]/g, '')` — removes punctuation (keeps word chars, spaces, hyphens)\n4. `.replace(/\\s+/g, '-')` — replaces spaces with hyphens\n5. `.replace(/-+/g, '-')` — collapses multiple hyphens to single\n6. `.replace(/^-+|-+$/g, '')` — removes any leading/trailing hyphens\n\n**Examples:**\n```javascript\nslugify(\"Hello, World!\")           // \"hello-world\"\nslugify(\"  Leading & Trailing  \")  // \"leading-trailing\"\nslugify(\"Multiple   Spaces\")       // \"multiple-spaces\"\nslugify(\"-Dashes-Everywhere-\")     // \"dashes-everywhere\"\nslugify(\"CamelCaseTitle\")          // \"camelcasetitle\"\n```"
+    },
+    {
+      "task": "slugify",
+      "arm": "baseline",
+      "rep": 4,
+      "loop_output_tokens": 905,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction slugify(title) {\n  return title\n    .toLowerCase()\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')  // Remove punctuation\n    .replace(/[\\s_]+/g, '-')   // Replace spaces/underscores with hyphens\n    .replace(/-+/g, '-')       // Collapse multiple hyphens to single\n    .replace(/^-+|-+$/g, '');  // Strip leading/trailing hyphens\n}\n```\n\n**Examples:**\n```javascript\nslugify(\"Hello World\")           // → \"hello-world\"\nslugify(\"Hello, World!\")         // → \"hello-world\"\nslugify(\"  Spaced Out  \")        // → \"spaced-out\"\nslugify(\"Multiple---Hyphens\")    // → \"multiple-hyphens\"\nslugify(\"Under_score_text\")      // → \"under-score-text\"\nslugify(\"!!!Exclamation!!!\")     // → \"exclamation\"\n```\n\nThe function chains five operations: lowercase, trim whitespace, remove punctuation (keeps word chars/spaces/hyphens), convert spaces and underscores to hyphens, collapse duplicate hyphens, then strip edges."
+    },
+    {
+      "task": "slugify",
+      "arm": "terse",
+      "rep": 0,
+      "loop_output_tokens": 1034,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction slugify(title) {\n  return title\n    .toLowerCase()\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')  // Remove punctuation\n    .replace(/[\\s_-]+/g, '-')  // Collapse spaces/underscores/hyphens to single hyphen\n    .replace(/^-+|-+$/g, '');  // Remove leading/trailing hyphens\n}\n```\n\nExamples:\n```javascript\nslugify(\"Hello World\")           // \"hello-world\"\nslugify(\"It's a Great Day!\")     // \"its-a-great-day\"\nslugify(\"  Foo  Bar  \")          // \"foo-bar\"\nslugify(\"Hello---World\")         // \"hello-world\"\nslugify(\"@#$ Test $#@\")          // \"test\"\n```\n\nHow it works:\n1. `toLowerCase()` + `trim()` — normalize case and whitespace edges\n2. `replace(/[^\\w\\s-]/g, '')` — strip punctuation (keeps only word chars, spaces, existing hyphens)\n3. `replace(/[\\s_-]+/g, '-')` — collapse runs of spaces/underscores/hyphens to single hyphen\n4. `replace(/^-+|-+$/g, '')` — strip leading/trailing hyphens"
+    },
+    {
+      "task": "slugify",
+      "arm": "terse",
+      "rep": 1,
+      "loop_output_tokens": 980,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction slugify(title) {\n  return title\n    .toLowerCase()\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')  // Remove punctuation, keep alphanumeric, spaces, hyphens\n    .replace(/[\\s_]+/g, '-')   // Replace spaces and underscores with hyphens\n    .replace(/-+/g, '-')       // Collapse multiple hyphens into one\n    .replace(/^-+|-+$/g, '');  // Remove leading and trailing hyphens\n}\n```\n\n**Examples:**\n```javascript\nslugify(\"Hello, World!\");           // \"hello-world\"\nslugify(\"  JavaScript Tips & Tricks  \");  // \"javascript-tips-tricks\"\nslugify(\"foo___bar\");               // \"foo-bar\"\nslugify(\"!!!edge case!!!\");         // \"edge-case\"\nslugify(\"already-a-slug\");          // \"already-a-slug\"\n```\n\nThe function chains regex replacements:\n1. Lowercase and trim whitespace\n2. Remove all punctuation (keep word chars, spaces, hyphens)\n3. Replace spaces/underscores with hyphens\n4. Collapse consecutive hyphens to single hyphens\n5. Strip leading/trailing hyphens"
+    },
+    {
+      "task": "slugify",
+      "arm": "terse",
+      "rep": 2,
+      "loop_output_tokens": 1312,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction slugify(title) {\n  return title\n    .toLowerCase()\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')       // remove punctuation (keep alphanumeric, spaces, hyphens)\n    .replace(/[\\s_]+/g, '-')        // convert spaces and underscores to hyphens\n    .replace(/-+/g, '-')            // collapse multiple hyphens to single\n    .replace(/^-+|-+$/g, '')        // remove leading/trailing hyphens\n}\n```\n\n**Usage:**\n```javascript\nslugify(\"Hello, World!\")           // → \"hello-world\"\nslugify(\"It's a Test!!!\")          // → \"its-a-test\"\nslugify(\"---My  Post---\")          // → \"my-post\"\nslugify(\"  spaces  around  \")      // → \"spaces-around\"\n```\n\nThe function chains operations: lowercases, trims whitespace, strips punctuation, converts spaces to hyphens, collapses consecutive hyphens, then strips any leading/trailing hyphens."
+    },
+    {
+      "task": "slugify",
+      "arm": "terse",
+      "rep": 3,
+      "loop_output_tokens": 1073,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction slugify(title) {\n  return title\n    .toLowerCase()\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')      // Remove punctuation\n    .replace(/[\\s]+/g, '-')        // Replace spaces with hyphens\n    .replace(/-+/g, '-')           // Collapse multiple hyphens\n    .replace(/^-+|-+$/g, '');      // Remove leading/trailing hyphens\n}\n```\n\nExamples:\n- `slugify(\"Hello, World!\")` → `\"hello-world\"`\n- `slugify(\"  What's UP???  \")` → `\"whats-up\"`\n- `slugify(\"Foo   Bar---Baz\")` → `\"foo-bar-baz\"`\n- `slugify(\"---Leading\")` → `\"leading\"`"
+    },
+    {
+      "task": "slugify",
+      "arm": "terse",
+      "rep": 4,
+      "loop_output_tokens": 755,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction slugify(title) {\n  return title\n    .toLowerCase()\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')           // Remove punctuation\n    .replace(/\\s+/g, '-')               // Replace spaces with hyphens\n    .replace(/-+/g, '-')                // Collapse multiple hyphens to single\n    .replace(/^-+|-+$/g, '');           // Remove leading/trailing hyphens\n}\n```\n\nUsage:\n```javascript\nslugify(\"Hello World!\")           // → \"hello-world\"\nslugify(\"What's New?\")            // → \"whats-new\"\nslugify(\"API & Tools—Best Ones\")  // → \"api-tools-best-ones\"\nslugify(\"  Multi---Dash Test  \") // → \"multi-dash-test\"\n```\n\nThe regex `[^\\w\\s-]` removes any character that isn't a word character (letters, digits, underscore), space, or hyphen. The subsequent replacements normalize whitespace to hyphens, collapse runs of hyphens, and trim edges."
+    },
+    {
+      "task": "slugify",
+      "arm": "flint",
+      "rep": 0,
+      "loop_output_tokens": 647,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction slugify(title) {\n  return title\n    .toLowerCase()\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')  // Remove punctuation\n    .replace(/\\s+/g, '-')       // Replace spaces with hyphens\n    .replace(/-+/g, '-')        // Consolidate multiple hyphens\n    .replace(/^-|-$/g, '');     // Remove leading/trailing hyphens\n}\n```\n\nHandles: \"Hello, World!\" → \"hello-world\", \"  Multiple   spaces  \" → \"multiple-spaces\", \"Trail---ing---hyphens---\" → \"trail-ing-hyphens\"."
+    },
+    {
+      "task": "slugify",
+      "arm": "flint",
+      "rep": 1,
+      "loop_output_tokens": 3921,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction slugify(title) {\n  return title\n    .toLowerCase()\n    .trim()\n    .replace(/[^\\w\\s-]/g, '')\n    .replace(/[\\s_-]+/g, '-')\n    .replace(/^-+|-+$/g, '');\n}\n```\n\n1. `toLowerCase` + `trim` — handle case and whitespace edges.\n2. Remove non-word characters (keeps letters, digits, underscores, spaces, hyphens).\n3. Collapse spaces/underscores/hyphens into single hyphens.\n4. Strip leading/trailing hyphens.\n\nTest: `slugify(\"Hello World!\")` → `\"hello-world\"`, `slugify(\"  Foo-Bar_Baz! \")` → `\"foo-bar-baz\"`."
+    },
+    {
+      "task": "slugify",
+      "arm": "flint",
+      "rep": 2,
+      "loop_output_tokens": 694,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction slugify(title) {\n  return title\n    .toLowerCase()\n    .replace(/[^\\w\\s-]/g, '')      // remove punctuation\n    .replace(/[\\s_]+/g, '-')       // spaces/underscores to hyphens\n    .replace(/-+/g, '-')           // collapse multiple hyphens\n    .replace(/^-+|-+$/g, '');      // trim leading/trailing hyphens\n}\n```\n\nExamples:\n```javascript\nslugify(\"Hello World!\")              // \"hello-world\"\nslugify(\"Multi---space   test\")      // \"multi-space-test\"\nslugify(\"---Leading & Trailing---\")  // \"leading-trailing\"\nslugify(\"Foo-Bar_Baz\")               // \"foo-bar-baz\"\n```\n\nFour passes handle it: lowercase → strip punctuation → consolidate spaces/hyphens → trim edges. Uses only built-in regex; no deps needed."
+    },
+    {
+      "task": "slugify",
+      "arm": "flint",
+      "rep": 3,
+      "loop_output_tokens": 799,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction slugify(title) {\n  return title\n    .toLowerCase()\n    .replace(/[^\\w\\s-]/g, '')    // remove punctuation\n    .trim()\n    .replace(/\\s+/g, '-')         // spaces to hyphens\n    .replace(/-+/g, '-')          // collapse multiple hyphens\n    .replace(/^-+|-+$/g, '');     // remove leading/trailing hyphens\n}\n```\n\nHandles all five cases: `\"Hello, World!\"` → `\"hello-world\"`, `\"Foo  Bar\"` → `\"foo-bar\"`, `\"-Test-\"` → `\"test\"`.\n\nSkipped: accented-character normalization (add if you need `café` → `cafe`). Use `.normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')` before the lowercasing if needed."
+    },
+    {
+      "task": "slugify",
+      "arm": "flint",
+      "rep": 4,
+      "loop_output_tokens": 668,
+      "num_turns": 1,
+      "error": null,
+      "result": "```javascript\nfunction slugify(title) {\n  return title\n    .toLowerCase()\n    .replace(/[^\\w\\s-]/g, '')  // remove punctuation\n    .replace(/\\s+/g, '-')       // replace spaces with hyphens\n    .replace(/-+/g, '-')        // collapse consecutive hyphens\n    .replace(/^-+|-+$/g, '');   // strip leading/trailing hyphens\n}\n```\n\nHandles: `\"Hello, World!\"` → `\"hello-world\"`, `\"  Multi   Space  \"` → `\"multi-space\"`, `\"Trailing---\"` → `\"trailing\"`."
+    },
+    {
+      "task": "csv-sum",
+      "arm": "baseline",
+      "rep": 0,
+      "loop_output_tokens": 782,
+      "num_turns": 1,
+      "error": null,
+      "result": "Here's a clean Python function using the built-in `csv` module:\n\n```python\nimport csv\n\ndef sum_amount(path):\n    \"\"\"\n    Reads a CSV file and returns the sum of numeric values in the 'amount' column.\n    \n    Args:\n        path (str): Path to the CSV file\n        \n    Returns:\n        float: Sum of all numeric values in the 'amount' column\n    \"\"\"\n    total = 0\n    with open(path, 'r') as file:\n        reader = csv.DictReader(file)\n        for row in reader:\n            total += float(row['amount'])\n    return total\n```\n\n**Alternative using pandas** (if you prefer a more concise approach):\n\n```python\nimport pandas as pd\n\ndef sum_amount(path):\n    \"\"\"Returns the sum of numeric values in the 'amount' column.\"\"\"\n    df = pd.read_csv(path)\n    return df['amount'].sum()\n```\n\n**Key points:**\n- `csv.DictReader` reads the header row automatically and treats each subsequent row as a dict\n- `row['amount']` accesses the 'amount' column by name\n- `float()` converts string values to numbers for addition\n- The `with` statement ensures the file is properly closed\n\nIf you need error handling (missing 'amount' column, non-numeric values, etc.), you could wrap the float conversion in a try-except block or use pandas' `pd.to_numeric()` with error handling."
+    },
+    {
+      "task": "csv-sum",
+      "arm": "baseline",
+      "rep": 1,
+      "loop_output_tokens": 587,
+      "num_turns": 1,
+      "error": null,
+      "result": "```python\nimport csv\n\ndef sum_amount(path):\n    total = 0\n    with open(path, 'r') as file:\n        reader = csv.DictReader(file)\n        for row in reader:\n            total += float(row['amount'])\n    return total\n```\n\nThis function:\n- Opens the CSV file and uses `DictReader` to parse it with the header row as keys\n- Iterates through each row, converting the 'amount' value to a float\n- Accumulates the sum and returns it\n\nIf you need error handling for missing values or invalid data:\n\n```python\nimport csv\n\ndef sum_amount(path):\n    total = 0\n    with open(path, 'r') as file:\n        reader = csv.DictReader(file)\n        for row in reader:\n            try:\n                total += float(row['amount'])\n            except (ValueError, KeyError):\n                continue  # Skip rows with missing or invalid amounts\n    return total\n```\n\nOr if you prefer a pandas one-liner:\n\n```python\nimport pandas as pd\n\ndef sum_amount(path):\n    return pd.read_csv(path)['amount'].sum()\n```"
+    },
+    {
+      "task": "csv-sum",
+      "arm": "baseline",
+      "rep": 2,
+      "loop_output_tokens": 884,
+      "num_turns": 1,
+      "error": null,
+      "result": "Here's a clean Python function that reads a CSV file and sums the 'amount' column:\n\n```python\nimport csv\n\ndef sum_amount(path):\n    with open(path, 'r') as f:\n        reader = csv.DictReader(f)\n        return sum(float(row['amount']) for row in reader)\n```\n\nThis function:\n- Opens the file at `path` and uses `csv.DictReader` to parse it with headers\n- Converts each 'amount' value to float and sums them in one expression\n- Returns the total\n\n**Example usage:**\n```python\ntotal = sum_amount('data.csv')  # CSV with 'amount' column\nprint(total)  # e.g., 1250.50\n```\n\nIf you need error handling (missing file, invalid data, missing column), add a try-except:\n\n```python\nimport csv\n\ndef sum_amount(path):\n    try:\n        with open(path, 'r') as f:\n            reader = csv.DictReader(f)\n            return sum(float(row['amount']) for row in reader)\n    except (FileNotFoundError, KeyError, ValueError) as e:\n        raise ValueError(f\"Error processing {path}: {e}\")\n```\n\nAlternatively, if you're already using pandas in your project, this is even simpler:\n```python\nimport pandas as pd\n\ndef sum_amount(path):\n    df = pd.read_csv(path)\n    return df['amount'].sum()\n```"
+    },
+    {
+      "task": "csv-sum",
+      "arm": "baseline",
+      "rep": 3,
+      "loop_output_tokens": 633,
+      "num_turns": 1,
+      "error": null,
+      "result": "```python\nimport csv\n\ndef sum_amount(path):\n    total = 0\n    with open(path, 'r') as file:\n        reader = csv.DictReader(file)\n        for row in reader:\n            try:\n                total += float(row['amount'])\n            except (ValueError, KeyError):\n                pass\n    return total\n```\n\nThis function:\n- Opens the CSV file and uses `csv.DictReader` to parse it with headers\n- Iterates through each row as a dictionary\n- Converts each value in the 'amount' column to a float and adds it to the running total\n- Skips rows with invalid or missing 'amount' values\n- Returns the sum\n\n**If you prefer using pandas** (cleaner for CSV work):\n\n```python\nimport pandas as pd\n\ndef sum_amount(path):\n    df = pd.read_csv(path)\n    return df['amount'].sum()\n```\n\nThe pandas version automatically handles NaN values by skipping them in the sum."
+    },
+    {
+      "task": "csv-sum",
+      "arm": "baseline",
+      "rep": 4,
+      "loop_output_tokens": 545,
+      "num_turns": 1,
+      "error": null,
+      "result": "```python\nimport csv\n\ndef sum_amount(path):\n    \"\"\"\n    Reads a CSV file and returns the sum of numeric values in the 'amount' column.\n    \n    Args:\n        path: File path to the CSV file\n        \n    Returns:\n        The sum of all numeric values in the 'amount' column\n    \"\"\"\n    total = 0\n    \n    with open(path, 'r') as file:\n        reader = csv.DictReader(file)\n        for row in reader:\n            total += float(row['amount'])\n    \n    return total\n```\n\nIf you prefer a more concise version using pandas:\n\n```python\nimport pandas as pd\n\ndef sum_amount(path):\n    \"\"\"\n    Reads a CSV file and returns the sum of numeric values in the 'amount' column.\n    \n    Args:\n        path: File path to the CSV file\n        \n    Returns:\n        The sum of all numeric values in the 'amount' column\n    \"\"\"\n    df = pd.read_csv(path)\n    return df['amount'].sum()\n```\n\nThe first version uses Python's built-in `csv` module and is lightweight with no external dependencies. The second uses pandas, which is more powerful if you need additional data manipulation. Both automatically skip the header row — `csv.DictReader` treats the first row as column names, and `pd.read_csv` does the same by default."
+    },
+    {
+      "task": "csv-sum",
+      "arm": "terse",
+      "rep": 0,
+      "loop_output_tokens": 913,
+      "num_turns": 1,
+      "error": null,
+      "result": "```python\nimport csv\n\ndef sum_amount(path):\n    \"\"\"Read a CSV file and return the sum of numeric values in the 'amount' column.\"\"\"\n    total = 0\n    with open(path, 'r') as file:\n        reader = csv.DictReader(file)\n        for row in reader:\n            try:\n                total += float(row['amount'])\n            except ValueError:\n                # Skip rows where 'amount' is not numeric\n                continue\n    return total\n```\n\nThis function:\n- Opens the CSV file and uses `DictReader` to parse rows as dictionaries using the header\n- Iterates through rows and converts the 'amount' value to float\n- Skips any non-numeric values gracefully\n- Returns the total sum\n\nIf a row is missing the 'amount' column, it'll raise a `KeyError`. If you want to skip those too, wrap the `row['amount']` access in the try/except.\n\n**Pandas alternative** if you prefer:\n```python\nimport pandas as pd\n\ndef sum_amount(path):\n    df = pd.read_csv(path)\n    return df['amount'].sum()\n```\n\nThe pandas version is more compact and handles non-numeric values by returning `NaN` for those rows, which are excluded from the sum."
+    },
+    {
+      "task": "csv-sum",
+      "arm": "terse",
+      "rep": 1,
+      "loop_output_tokens": 986,
+      "num_turns": 1,
+      "error": null,
+      "result": "```python\nimport csv\n\ndef sum_amount(path):\n    \"\"\"Read a CSV file and return the sum of values in the 'amount' column.\n    \n    Args:\n        path: Path to the CSV file with a header row.\n    \n    Returns:\n        The sum of numeric values in the 'amount' column.\n    \"\"\"\n    total = 0\n    with open(path, 'r') as file:\n        reader = csv.DictReader(file)\n        for row in reader:\n            try:\n                total += float(row['amount'])\n            except (ValueError, KeyError):\n                continue\n    return total\n```\n\nThis function:\n- Opens the CSV file and uses `csv.DictReader` to parse it with headers automatically\n- Iterates through each row and accumulates values from the 'amount' column\n- Converts each value to `float` to handle both integers and decimals\n- Skips rows with missing or non-numeric values gracefully\n- Returns the total sum\n\nIf your project already uses pandas, this alternative is even simpler:\n\n```python\nimport pandas as pd\n\ndef sum_amount(path):\n    df = pd.read_csv(path)\n    return df['amount'].sum()\n```"
+    },
+    {
+      "task": "csv-sum",
+      "arm": "terse",
+      "rep": 2,
+      "loop_output_tokens": 620,
+      "num_turns": 1,
+      "error": null,
+      "result": "```python\nimport csv\n\ndef sum_amount(path):\n    total = 0\n    with open(path, 'r') as file:\n        reader = csv.DictReader(file)\n        for row in reader:\n            total += float(row['amount'])\n    return total\n```\n\nThis function:\n- Opens the CSV file and uses `DictReader` to parse it with the header row as keys\n- Iterates through each row, accessing the 'amount' column by name\n- Converts values to float and accumulates the sum\n- Returns the total\n\nIf you need more robustness (handling missing values, non-numeric entries, etc.), wrap the `float()` call:\n\n```python\nimport csv\n\ndef sum_amount(path):\n    total = 0\n    with open(path, 'r') as file:\n        reader = csv.DictReader(file)\n        for row in reader:\n            try:\n                total += float(row['amount'])\n            except (ValueError, KeyError):\n                pass  # Skip non-numeric or missing values\n    return total\n```"
+    },
+    {
+      "task": "csv-sum",
+      "arm": "terse",
+      "rep": 3,
+      "loop_output_tokens": 436,
+      "num_turns": 1,
+      "error": null,
+      "result": "```python\nimport csv\n\ndef sum_amount(path):\n    \"\"\"\n    Read a CSV file and return the sum of numeric values in the 'amount' column.\n    \n    Args:\n        path: Path to the CSV file with a header row\n        \n    Returns:\n        The sum of all numeric values in the 'amount' column\n    \"\"\"\n    total = 0\n    \n    with open(path, 'r') as file:\n        reader = csv.DictReader(file)\n        for row in reader:\n            try:\n                total += float(row['amount'])\n            except (ValueError, TypeError):\n                # Skip non-numeric values\n                continue\n    \n    return total\n```\n\nThis function:\n- Opens the CSV file and uses `csv.DictReader` to parse rows as dictionaries (keyed by header names)\n- Iterates through each row and accesses the 'amount' column\n- Converts values to float and accumulates the sum\n- Skips any rows with non-numeric values in the 'amount' column\n\nUsage:\n```python\ntotal = sum_amount('data.csv')\nprint(f\"Total: {total}\")\n```"
+    },
+    {
+      "task": "csv-sum",
+      "arm": "terse",
+      "rep": 4,
+      "loop_output_tokens": 531,
+      "num_turns": 1,
+      "error": null,
+      "result": "```python\nimport csv\n\ndef sum_amount(path):\n    \"\"\"Read a CSV file and return the sum of values in the 'amount' column.\"\"\"\n    total = 0\n    with open(path, 'r') as f:\n        reader = csv.DictReader(f)\n        for row in reader:\n            total += float(row['amount'])\n    return total\n```\n\nThe function uses `csv.DictReader` to parse the CSV with headers, iterates through each row, and accumulates the sum by converting 'amount' values to floats.\n\n**Alternative using pandas** (if that's available):\n\n```python\nimport pandas as pd\n\ndef sum_amount(path):\n    \"\"\"Read a CSV file and return the sum of values in the 'amount' column.\"\"\"\n    df = pd.read_csv(path)\n    return df['amount'].sum()\n```\n\nThe pandas version is more concise and handles type conversion automatically."
+    },
+    {
+      "task": "csv-sum",
+      "arm": "flint",
+      "rep": 0,
+      "loop_output_tokens": 703,
+      "num_turns": 1,
+      "error": null,
+      "result": "```python\nimport csv\n\ndef sum_amount(path):\n    total = 0\n    with open(path) as f:\n        reader = csv.DictReader(f)\n        for row in reader:\n            total += float(row['amount'])\n    return total\n```\n\nUses stdlib `csv.DictReader` to parse the header and access the 'amount' column by name. Converts each value to float (handles both int and decimal strings). Raises `FileNotFoundError` if path missing, `KeyError` if 'amount' column absent, `ValueError` if a value isn't numeric—all reasonable for invalid input."
+    },
+    {
+      "task": "csv-sum",
+      "arm": "flint",
+      "rep": 1,
+      "loop_output_tokens": 576,
+      "num_turns": 1,
+      "error": null,
+      "result": "```python\nimport csv\n\ndef sum_amount(path):\n    with open(path) as f:\n        reader = csv.DictReader(f)\n        return sum(float(row['amount']) for row in reader)\n```\n\nReads the CSV with `DictReader` (handles the header automatically), converts each 'amount' to float, and sums them. \n\nSkipped: error handling for missing/malformed data. Add when the file source is untrusted or 'amount' values aren't guaranteed numeric."
+    },
+    {
+      "task": "csv-sum",
+      "arm": "flint",
+      "rep": 2,
+      "loop_output_tokens": 678,
+      "num_turns": 1,
+      "error": null,
+      "result": "```python\nimport csv\n\ndef sum_amount(path):\n    with open(path) as f:\n        reader = csv.DictReader(f)\n        return sum(float(row['amount']) for row in reader)\n```\n\nUses `csv.DictReader` to parse the header automatically and treats each row as a dict. `float()` coerces values; `sum()` returns 0 for empty files.\n\nSkipped: error handling for missing files / missing column / non-numeric values. Add if you need validation, or let natural exceptions surface."
+    },
+    {
+      "task": "csv-sum",
+      "arm": "flint",
+      "rep": 3,
+      "loop_output_tokens": 554,
+      "num_turns": 1,
+      "error": null,
+      "result": "```python\nimport csv\n\ndef sum_amount(path):\n    total = 0\n    with open(path) as f:\n        reader = csv.DictReader(f)\n        for row in reader:\n            total += float(row['amount'])\n    return total\n```\n\nOpens file, reads CSV with headers via `DictReader`, sums the 'amount' column as floats. Raises `FileNotFoundError` if path doesn't exist, `KeyError` if 'amount' column missing, `ValueError` if a value isn't numeric—all reasonable failures. Skipped: error handling/logging (add when you need graceful degradation instead of loud failure)."
+    },
+    {
+      "task": "csv-sum",
+      "arm": "flint",
+      "rep": 4,
+      "loop_output_tokens": 760,
+      "num_turns": 1,
+      "error": null,
+      "result": "```python\nimport csv\n\ndef sum_amount(path):\n    with open(path) as f:\n        total = sum(float(row['amount']) for row in csv.DictReader(f))\n    return total\n```\n\n`csv.DictReader` reads the header row and yields dicts keyed by column name. The generator expression converts each 'amount' to float and sums them. → Skipped error handling, add when files may not exist or amounts are non-numeric."
+    },
+    {
+      "task": "date-input",
+      "arm": "baseline",
+      "rep": 0,
+      "loop_output_tokens": 455,
+      "num_turns": 1,
+      "error": null,
+      "result": "Here's a simple date input for an HTML form:\n\n```html\n<form>\n  <label for=\"birthdate\">Select a date:</label>\n  <input type=\"date\" id=\"birthdate\" name=\"birthdate\" required>\n  <button type=\"submit\">Submit</button>\n</form>\n```\n\n**Key attributes:**\n- `type=\"date\"` — renders a native date picker (browser handles the UI)\n- `id` — links the label to the input\n- `name` — the form field name when submitted\n- `required` — makes the field mandatory\n\n**Optional attributes for constraints:**\n\n```html\n<input \n  type=\"date\" \n  id=\"event-date\" \n  name=\"event-date\"\n  min=\"2026-06-19\"\n  max=\"2026-12-31\"\n  value=\"2026-06-19\"\n>\n```\n\n- `min` / `max` — restrict selectable date range\n- `value` — set a default date (format: `YYYY-MM-DD`)\n\n**Getting the value in JavaScript:**\n\n```javascript\nconst dateInput = document.getElementById('birthdate');\nconst selectedDate = dateInput.value; // Returns \"2026-06-19\"\nconst dateObject = new Date(selectedDate); // Convert to Date object\n```\n\nThe native `<input type=\"date\">` is supported in all modern browsers and provides an accessible, mobile-friendly date picker with built-in validation."
+    },
+    {
+      "task": "date-input",
+      "arm": "baseline",
+      "rep": 1,
+      "loop_output_tokens": 444,
+      "num_turns": 1,
+      "error": null,
+      "result": "The simplest and most modern approach is the native HTML5 `<input type=\"date\">` element:\n\n```html\n<form>\n  <label for=\"event-date\">Event Date:</label>\n  <input type=\"date\" id=\"event-date\" name=\"event-date\" required>\n  <button type=\"submit\">Submit</button>\n</form>\n```\n\nThis provides:\n- A native date picker UI (browser-specific, optimized for the platform)\n- Built-in validation (rejects invalid dates)\n- Keyboard navigation support\n- Mobile-friendly date picker\n- Value formatted as `YYYY-MM-DD` in the form submission\n\n**Optional attributes:**\n- `min=\"2026-01-01\"` and `max=\"2026-12-31\"` to restrict selectable range\n- `value=\"2026-06-19\"` to set a default date\n- `required` to enforce selection before form submission\n\n**If you need more control** (e.g., custom styling, specific UI), use a date picker library like Litepicker, Flatpickr, or the framework's built-in components (React Hook Form, etc.). But for most cases, the native input handles it well and requires zero dependencies."
+    },
+    {
+      "task": "date-input",
+      "arm": "baseline",
+      "rep": 2,
+      "loop_output_tokens": 629,
+      "num_turns": 1,
+      "error": null,
+      "result": "```html\n<!-- Basic date input -->\n<form>\n  <label for=\"date-picker\">Pick a date:</label>\n  <input type=\"date\" id=\"date-picker\" name=\"event-date\" required>\n  <button type=\"submit\">Submit</button>\n</form>\n```\n\nThe HTML `<input type=\"date\">` element is the standard way to let users pick a date. It:\n\n- Shows a native date picker on most browsers (desktop calendar, mobile date picker)\n- Handles validation automatically (rejects invalid dates)\n- Returns the value in `YYYY-MM-DD` format\n- Works across browsers with fallback to text input on older browsers\n\n**Common attributes:**\n\n```html\n<input \n  type=\"date\" \n  id=\"event-date\"\n  name=\"event-date\"\n  min=\"2026-06-19\"           <!-- earliest selectable date -->\n  max=\"2026-12-31\"           <!-- latest selectable date -->\n  value=\"2026-06-19\"         <!-- pre-populate a date -->\n  required                   <!-- make it mandatory -->\n>\n```\n\n**JavaScript access:**\n\n```javascript\nconst datePicker = document.getElementById('event-date');\n\n// Get the selected date\nconst selectedDate = datePicker.value; // \"2026-06-19\"\n\n// Set a date programmatically\ndatePicker.value = '2026-07-15';\n\n// Listen for changes\ndatePicker.addEventListener('change', (e) => {\n  console.log('Selected:', e.target.value);\n});\n```\n\n**If you need the date as a Date object:**\n\n```javascript\nconst dateString = datePicker.value; // \"2026-06-19\"\nconst dateObj = new Date(dateString + 'T00:00:00'); // Avoid timezone issues\n```\n\nThat's it — no external libraries needed. The browser handles the UI and validation for you."
+    },
+    {
+      "task": "date-input",
+      "arm": "baseline",
+      "rep": 3,
+      "loop_output_tokens": 565,
+      "num_turns": 1,
+      "error": null,
+      "result": "Here's a straightforward date input implementation:\n\n```html\n<form>\n  <label for=\"date-picker\">Select a date:</label>\n  <input \n    type=\"date\" \n    id=\"date-picker\" \n    name=\"event-date\"\n    required\n  />\n  <button type=\"submit\">Submit</button>\n</form>\n```\n\n**Key attributes:**\n\n- `type=\"date\"` — native HTML5 date picker (works on all modern browsers)\n- `id` — links the label to the input\n- `name` — sent with the form submission\n- `required` — makes the field mandatory (optional)\n\n**Add min/max dates to constrain selection:**\n\n```html\n<input \n  type=\"date\" \n  id=\"date-picker\" \n  name=\"event-date\"\n  min=\"2026-01-01\"\n  max=\"2026-12-31\"\n/>\n```\n\n**Set a default value:**\n\n```html\n<input \n  type=\"date\" \n  id=\"date-picker\" \n  name=\"event-date\"\n  value=\"2026-06-19\"\n/>\n```\n\n**Retrieve the value with JavaScript:**\n\n```javascript\nconst dateInput = document.getElementById('date-picker');\nconst selectedDate = dateInput.value; // Returns \"2026-06-19\" format\n\ndateInput.addEventListener('change', (e) => {\n  console.log('Selected:', e.target.value);\n});\n```\n\nThe native `<input type=\"date\">` gives you a browser-native picker (calendar UI on mobile, date picker widget on desktop) with no dependencies. If you need a custom design, you can style it or use a third-party library like Flatpickr or React Calendar, but the native input handles 99% of use cases."
+    },
+    {
+      "task": "date-input",
+      "arm": "baseline",
+      "rep": 4,
+      "loop_output_tokens": 464,
+      "num_turns": 1,
+      "error": null,
+      "result": "Here's a basic date input implementation:\n\n```html\n<form>\n  <label for=\"date-input\">Pick a date:</label>\n  <input type=\"date\" id=\"date-input\" name=\"date\" required>\n  <button type=\"submit\">Submit</button>\n</form>\n```\n\nThe `<input type=\"date\">` element:\n- Renders a native date picker (varies by browser)\n- Returns a string in `YYYY-MM-DD` format\n- Includes browser validation\n- Works on desktop and mobile\n\nTo set a default date or access the value in JavaScript:\n\n```html\n<input type=\"date\" id=\"date-input\" value=\"2026-06-19\">\n\n<script>\n  const dateInput = document.getElementById('date-input');\n  \n  // Get the value\n  const selectedDate = dateInput.value; // \"2026-06-19\"\n  \n  // Set a new value\n  dateInput.value = \"2026-07-01\";\n  \n  // Parse if needed\n  const date = new Date(dateInput.value);\n</script>\n```\n\nFor older browser support or custom styling, use a library like Flatpickr or similar, but `<input type=\"date\">` covers 98%+ of use cases today."
+    },
+    {
+      "task": "date-input",
+      "arm": "terse",
+      "rep": 0,
+      "loop_output_tokens": 432,
+      "num_turns": 1,
+      "error": null,
+      "result": "Here's a date input for an HTML form:\n\n```html\n<form>\n  <label for=\"date\">Select a date:</label>\n  <input\n    type=\"date\"\n    id=\"date\"\n    name=\"date\"\n    required\n  />\n  <button type=\"submit\">Submit</button>\n</form>\n```\n\nThe `<input type=\"date\">` element handles date picking natively in modern browsers—it shows a calendar picker on desktop and a native date selector on mobile.\n\n**Common attributes:**\n\n- `name` — form submission field name\n- `id` — for the label's `for` attribute\n- `required` — makes the field mandatory\n- `min` / `max` — restrict the date range: `min=\"2026-01-01\"` `max=\"2026-12-31\"`\n- `value` — set a default date: `value=\"2026-06-19\"`\n\n**Browser support:** All modern browsers (Firefox, Chrome, Safari, Edge). IE 11 falls back to a text input—add a polyfill if needed.\n\n**Get the value in JavaScript:**\n\n```javascript\nconst dateInput = document.getElementById('date');\nconsole.log(dateInput.value); // \"2026-06-19\" (ISO 8601 format)\n```"
+    },
+    {
+      "task": "date-input",
+      "arm": "terse",
+      "rep": 1,
+      "loop_output_tokens": 511,
+      "num_turns": 1,
+      "error": null,
+      "result": "Use the HTML5 `<input type=\"date\">` element. It provides a native date picker on most browsers and handles validation automatically.\n\n```html\n<form>\n  <label for=\"birthdate\">Select a date:</label>\n  <input type=\"date\" id=\"birthdate\" name=\"birthdate\" required>\n  <button type=\"submit\">Submit</button>\n</form>\n```\n\n**Common attributes:**\n\n- `required` — forces the user to select a date\n- `min` / `max` — restrict the date range (e.g., `min=\"2024-01-01\"`)\n- `value` — set a default date (format: `YYYY-MM-DD`)\n\n**Example with constraints:**\n\n```html\n<input \n  type=\"date\" \n  id=\"appointment\" \n  name=\"appointment\"\n  min=\"2026-06-19\"\n  max=\"2026-12-31\"\n  value=\"2026-06-19\"\n  required\n>\n```\n\nThe browser renders a native date picker (calendar UI on desktop, date picker on mobile). The form will validate the date and reject submission if empty or outside the min/max range.\n\nIf you need a fallback for older browsers or custom styling, you can use a library like `<input type=\"text\">` + a JavaScript date picker (e.g., Flatpickr, litepicker), but the native input works for most cases."
+    },
+    {
+      "task": "date-input",
+      "arm": "terse",
+      "rep": 2,
+      "loop_output_tokens": 425,
+      "num_turns": 1,
+      "error": null,
+      "result": "Here's a simple HTML date input:\n\n```html\n<form>\n  <label for=\"event-date\">Pick a date:</label>\n  <input type=\"date\" id=\"event-date\" name=\"event-date\" required>\n  <button type=\"submit\">Submit</button>\n</form>\n```\n\n**Key points:**\n\n- `type=\"date\"` renders a native date picker (calendar UI on most browsers)\n- `id` and `label`'s `for` attribute link them together for accessibility\n- `name` is what gets sent in the form submission\n- `required` makes it mandatory (optional, remove if you want it optional)\n- No JavaScript needed — the browser handles validation and formatting\n\n**If you need to set a default value:**\n\n```html\n<input type=\"date\" id=\"event-date\" name=\"event-date\" value=\"2026-06-19\">\n```\n\n**If you need to restrict the date range:**\n\n```html\n<input type=\"date\" id=\"event-date\" name=\"event-date\" min=\"2026-01-01\" max=\"2026-12-31\">\n```\n\nThat covers most use cases. The browser handles the picker UI and returns the value in `YYYY-MM-DD` format."
+    },
+    {
+      "task": "date-input",
+      "arm": "terse",
+      "rep": 3,
+      "loop_output_tokens": 425,
+      "num_turns": 1,
+      "error": null,
+      "result": "Here's a basic date input implementation:\n\n```html\n<form>\n  <label for=\"event-date\">Select a date:</label>\n  <input\n    type=\"date\"\n    id=\"event-date\"\n    name=\"event-date\"\n    required\n  >\n  <button type=\"submit\">Submit</button>\n</form>\n```\n\nThe `<input type=\"date\">` element provides a native date picker on most browsers and mobile devices. Key attributes:\n\n- **`type=\"date\"`** - triggers the date picker\n- **`id`** / **`name`** - for form handling and labels\n- **`required`** - enforces selection before submit\n- **`min` / `max`** - restrict selectable range:\n  ```html\n  <input type=\"date\" min=\"2026-01-01\" max=\"2026-12-31\">\n  ```\n- **`value`** - set a default:\n  ```html\n  <input type=\"date\" value=\"2026-06-19\">\n  ```\n\nFor styling or custom behavior, wrap it in a container or use CSS. Browser support is excellent on modern browsers and all mobile devices. If you need a fallback for older browsers, you can use a `text` input with a placeholder and validate/parse the string manually."
+    },
+    {
+      "task": "date-input",
+      "arm": "terse",
+      "rep": 4,
+      "loop_output_tokens": 539,
+      "num_turns": 1,
+      "error": null,
+      "result": "```html\n<form>\n  <label for=\"event-date\">Select a date:</label>\n  <input type=\"date\" id=\"event-date\" name=\"event-date\" required>\n  \n  <button type=\"submit\">Submit</button>\n</form>\n```\n\nThe HTML5 `<input type=\"date\">` element is the standard — it provides:\n- Native date picker on most browsers (calendar UI on mobile)\n- Built-in validation\n- Returns `YYYY-MM-DD` format automatically\n\n**Optional attributes:**\n```html\n<input \n  type=\"date\" \n  id=\"event-date\" \n  name=\"event-date\"\n  min=\"2026-06-19\"          <!-- earliest selectable date -->\n  max=\"2026-12-31\"          <!-- latest selectable date -->\n  value=\"2026-06-19\"        <!-- pre-fill a date -->\n  required\n>\n```\n\n**Accessing the value in JavaScript:**\n```javascript\nconst dateInput = document.getElementById('event-date');\nconsole.log(dateInput.value);  // \"2026-06-19\"\n\n// Convert to Date object if needed\nconst date = new Date(dateInput.value + 'T00:00:00');\n```\n\nIf you need to support older browsers or want a custom picker, use a library like Flatpickr or vanilla JS, but the native input handles 99% of cases."
+    },
+    {
+      "task": "date-input",
+      "arm": "flint",
+      "rep": 0,
+      "loop_output_tokens": 363,
+      "num_turns": 1,
+      "error": null,
+      "result": "```html\n<label for=\"date-input\">Pick a date</label>\n<input type=\"date\" id=\"date-input\" name=\"date\" required>\n```\n\nThat's it. `<input type=\"date\">` handles formatting, validation, and platform-native picker (calendar on mobile, date widget on desktop). No JS needed.\n\nIf you need to read the value: `document.getElementById('date-input').value` returns ISO format `YYYY-MM-DD`.\n\nFor constraint (min/max dates): add `min=\"2026-01-01\" max=\"2026-12-31\"`."
+    },
+    {
+      "task": "date-input",
+      "arm": "flint",
+      "rep": 1,
+      "loop_output_tokens": 546,
+      "num_turns": 1,
+      "error": null,
+      "result": "```html\n<label for=\"date\">Date</label>\n<input type=\"date\" id=\"date\" name=\"date\" required>\n```\n\nThat's it. The native `<input type=\"date\">` handles everything: mobile shows a calendar picker, desktop shows a date picker, it validates format automatically, and returns ISO 8601 format (`YYYY-MM-DD`) in the form value.\n\nIf you need to set a default:\n```html\n<input type=\"date\" id=\"date\" name=\"date\" value=\"2026-06-19\" required>\n```\n\nIf you need min/max bounds:\n```html\n<input type=\"date\" id=\"date\" name=\"date\" min=\"2026-01-01\" max=\"2026-12-31\" required>\n```\n\nSkipped: custom styling, JS validation, third-party picker lib. Add them if the native UX doesn't fit your design or you need constraints beyond min/max."
+    },
+    {
+      "task": "date-input",
+      "arm": "flint",
+      "rep": 2,
+      "loop_output_tokens": 414,
+      "num_turns": 1,
+      "error": null,
+      "result": "```html\n<label for=\"date-input\">Date</label>\n<input type=\"date\" id=\"date-input\" name=\"date\" required>\n```\n\nHTML's native `<input type=\"date\">` handles this. Cross-browser, accessible, mobile-friendly, and no dependencies. Use it.\n\nIf you need to read/set the value in JavaScript:\n```javascript\nconst input = document.getElementById('date-input');\nconsole.log(input.value);  // \"2026-06-19\"\ninput.value = '2026-06-19';\n```\n\nAdd a custom picker only if the native input doesn't meet a specific constraint (older IE support, niche locale/format need). Name that constraint and I'll suggest the minimal override."
+    },
+    {
+      "task": "date-input",
+      "arm": "flint",
+      "rep": 3,
+      "loop_output_tokens": 352,
+      "num_turns": 1,
+      "error": null,
+      "result": "```html\n<label for=\"event-date\">Date</label>\n<input type=\"date\" id=\"event-date\" name=\"event_date\" required>\n```\n\nNative `<input type=\"date\">` handles this. No library, no JS. The browser renders a date picker (native on mobile, calendar widget on desktop), validates format, and returns `YYYY-MM-DD` on submit. Add `min`, `max`, or `value` attributes if you need constraints or a default."
+    },
+    {
+      "task": "date-input",
+      "arm": "flint",
+      "rep": 4,
+      "loop_output_tokens": 421,
+      "num_turns": 1,
+      "error": null,
+      "result": "```html\n<input type=\"date\" name=\"date\" id=\"date\">\n```\n\nNative `<input type=\"date\">` handles it. Provides a native date picker on desktop and mobile, validates format (YYYY-MM-DD), no library needed. Add `required` if the field is mandatory, or `min`/`max` to constrain the range."
+    },
+    {
+      "task": "react-rerender",
+      "arm": "baseline",
+      "rep": 0,
+      "loop_output_tokens": 669,
+      "num_turns": 1,
+      "error": null,
+      "result": "React compares prop values by reference, not by content. When you create an inline object, each render creates a new object in memory with a new reference. Even if the object's data is identical, React sees `{a: 1} !== {a: 1}` and treats it as a prop change, triggering a re-render in the child component.\n\n```javascript\n// ❌ NEW OBJECT EVERY RENDER\nfunction Parent() {\n  return <Child style={{ color: 'red' }} />;  // new object each time\n}\n\n// ✓ MEMOIZE WITH useMemo\nfunction Parent() {\n  const style = useMemo(() => ({ color: 'red' }), []);\n  return <Child style={style} />;\n}\n\n// ✓ MOVE OUTSIDE THE COMPONENT\nconst STYLE = { color: 'red' };\nfunction Parent() {\n  return <Child style={STYLE} />;\n}\n\n// ✓ WRAP CHILD WITH React.memo\nconst Child = React.memo(({ style }) => <div style={style}>Hi</div>);\n// Now Child only re-renders if the actual style reference changes\nfunction Parent() {\n  const style = useMemo(() => ({ color: 'red' }), []);\n  return <Child style={style} />;\n}\n```\n\n**Best approach depends on context:**\n\n- **Constant data** — move it outside the component (simplest)\n- **Dynamic data** — use `useMemo` with appropriate dependencies\n- **Sensitive child** — combine `React.memo` on the child + `useMemo` on props\n- **Simple values** — pass primitives instead of objects when possible\n\nThe key: ensure the same object reference persists across renders, or React sees it as a changed prop."
+    },
+    {
+      "task": "react-rerender",
+      "arm": "baseline",
+      "rep": 1,
+      "loop_output_tokens": 667,
+      "num_turns": 1,
+      "error": null,
+      "result": "# Why inline objects cause re-renders\n\nReact compares props by **reference**, not value. When you pass `{ color: 'blue' }` inline, a new object is created on every render. Even though the content is identical, the reference is different, so React sees it as a changed prop.\n\n```jsx\n// ❌ Problem: new object every render\nfunction Parent() {\n  return <Child config={{ color: 'blue' }} />;\n}\n\n// Each render: { color: 'blue' } !== { color: 'blue' }\n// Child re-renders even if everything else is the same\n```\n\nThis matters most when:\n- Child is wrapped in `React.memo` — it skips re-renders only if all props pass `===` comparison\n- Child has expensive computations or side effects triggered by prop changes\n\n---\n\n# Solutions\n\n**1. Move it outside the component (static)**\n```jsx\nconst CONFIG = { color: 'blue' };\n\nfunction Parent() {\n  return <Child config={CONFIG} />;\n}\n```\n\n**2. Use `useMemo` (if the object must be dynamic)**\n```jsx\nfunction Parent({ userId }) {\n  const config = useMemo(() => ({ color: 'blue', userId }), [userId]);\n  return <Child config={config} />;\n}\n```\n\n**3. Use `useCallback` if it's a function object**\n```jsx\nfunction Parent() {\n  const handler = useCallback(() => console.log('clicked'), []);\n  return <Child onClick={handler} />;\n}\n```\n\n**4. Destructure the object as separate props**\n```jsx\nfunction Parent() {\n  return <Child color=\"blue\" size=\"large\" />;\n}\n// Primitive props are compared by value, not reference\n```\n\n**Best practice:** Option 1 (static) is cleanest. Use `useMemo` only if the object's content depends on props/state that change frequently."
+    },
+    {
+      "task": "react-rerender",
+      "arm": "baseline",
+      "rep": 2,
+      "loop_output_tokens": 577,
+      "num_turns": 1,
+      "error": null,
+      "result": "**Why it re-renders:**\n\nReact uses referential equality (`===`) to detect if props changed. Every time the parent renders, a new object literal is created in memory, even if it has identical contents. This new object reference triggers the child's re-render, regardless of whether the actual data changed.\n\n```jsx\n// Parent\nfunction Parent() {\n  return <Child config={{ color: 'blue', size: 10 }} />\n  // config is a NEW object every render\n}\n\n// Child receives a new 'config' object each time,\n// even though the values are the same\n```\n\n**Solutions:**\n\n1. **Move it outside the component** (simplest for static values)\n```jsx\nconst CONFIG = { color: 'blue', size: 10 }\n\nfunction Parent() {\n  return <Child config={CONFIG} />\n}\n```\n\n2. **useMemo** (for values computed from parent state)\n```jsx\nfunction Parent({ color, size }) {\n  const config = useMemo(() => ({ color, size }), [color, size])\n  return <Child config={config} />\n}\n```\n\n3. **Memoize the child component** (if the object must be inline)\n```jsx\nconst Child = memo(({ config }) => (\n  <div>{config.color}</div>\n))\n\nfunction Parent() {\n  return <Child config={{ color: 'blue' }} />\n}\n```\nThis prevents re-renders only if parent doesn't re-render. Memoization alone doesn't solve the inline object problem; you need it paired with useMemo or extracted values.\n\n**Best practice:** Extract constants or use `useMemo` with proper dependencies. Memoization is a safety net, not the primary solution for inline objects."
+    },
+    {
+      "task": "react-rerender",
+      "arm": "baseline",
+      "rep": 3,
+      "loop_output_tokens": 618,
+      "num_turns": 1,
+      "error": null,
+      "result": "When you pass an inline object as a prop, React re-renders the child component because JavaScript creates a *new object reference every render*, even if the values are identical. React's default comparison uses referential equality (`===`), not deep equality, so `{ foo: 'bar' }` passed on render 1 is a different object than `{ foo: 'bar' }` on render 2.\n\n```jsx\n// BAD: new object reference every render\nfunction Parent() {\n  return <Child style={{ color: 'red' }} />\n}\n\n// Parent re-renders → new object created → Child sees \"new\" prop → Child re-renders\n```\n\n**Fix 1: Move it outside (simplest)**\n```jsx\nconst STYLE = { color: 'red' }\n\nfunction Parent() {\n  return <Child style={STYLE} />\n}\n```\n\n**Fix 2: useMemo (if it depends on other values)**\n```jsx\nfunction Parent({ color }) {\n  const style = React.useMemo(() => ({ color }), [color])\n  return <Child style={style} />\n}\n```\n\n**Fix 3: Memoize the child (if many props)**\n```jsx\nconst Child = React.memo(({ style }) => {\n  // only re-renders if style actually changes\n  return <div style={style}>...</div>\n})\n\nfunction Parent() {\n  return <Child style={{ color: 'red' }} />\n}\n```\n\n**Fix 4: Destructure at the callsite (modern approach)**\n```jsx\nfunction Parent() {\n  return <Child color=\"red\" />\n}\n\nfunction Child({ color }) {\n  const style = { color }\n  // style is created fresh, but you control when it matters\n}\n```\n\n**When this actually matters**: Child is expensive to render (complex calculations, animations) or is memoized. If Child is trivial, the re-render is negligible and not worth the complexity. Premature optimization on props objects is a common mistake — measure first."
+    },
+    {
+      "task": "react-rerender",
+      "arm": "baseline",
+      "rep": 4,
+      "loop_output_tokens": 880,
+      "num_turns": 1,
+      "error": null,
+      "result": "**The Problem: Reference Equality**\n\nWhen you pass an inline object, a *new object is created on every render*, even if its values are identical. React compares props using shallow equality (reference comparison), so it sees:\n\n```javascript\n// Render 1: { color: 'red' } → object reference #1\n// Render 2: { color: 'red' } → object reference #2 (different!)\n// React sees props as changed, re-renders child\n<Child style={{ color: 'red' }} />\n```\n\nThis forces the child to re-render even if the object's contents didn't change.\n\n**Solutions**\n\n**1. Move it outside the component (best)**\n```javascript\nconst STYLE = { color: 'red' };\n\nfunction Parent() {\n  return <Child style={STYLE} />;\n}\n```\n\nObject is created once, same reference every time.\n\n---\n\n**2. Memoize with useMemo**\n```javascript\nfunction Parent() {\n  const style = useMemo(() => ({ color: 'red' }), []);\n  return <Child style={style} />;\n}\n```\n\nObject is created once and reused. Add dependencies if the object should change.\n\n---\n\n**3. Memoize the child with React.memo**\n```javascript\nconst Child = React.memo(({ style }) => {\n  return <div style={style}>content</div>;\n});\n```\n\nChild only re-renders if props *actually* change (reference-wise). This doesn't fix the object creation, but prevents unnecessary renders of the child.\n\n---\n\n**4. Combine: memoize both parent object and child component**\n```javascript\nconst STYLE = { color: 'red' };\n\nconst Child = React.memo(({ style }) => {\n  return <div style={style}>content</div>;\n});\n\nfunction Parent() {\n  return <Child style={STYLE} />;\n}\n```\n\nStrongest prevention: object never changes, and child skips re-renders if props don't.\n\n---\n\n**The Principle**\n\nJavaScript's reference identity matters to React. If you create a new object/array/function on every render, React treats it as \"new data\" even if its shape is the same. Always either:\n- Define it outside render scope, or\n- Memoize it with `useMemo` / `useCallback` and stabilize dependencies"
+    },
+    {
+      "task": "react-rerender",
+      "arm": "terse",
+      "rep": 0,
+      "loop_output_tokens": 686,
+      "num_turns": 1,
+      "error": null,
+      "result": "# Why inline objects cause re-renders\n\n**The problem:** Every time a parent renders, a new object literal is created. Even if the contents are identical, it's a different object in memory. React (and JavaScript generally) compares objects by reference, not by value, so the child sees a \"new\" prop and re-renders.\n\n```javascript\n// Parent renders every second\nfunction Parent() {\n  return <Child config={{ color: \"blue\" }} />;\n  // ↑ new object created on every render, even if values are the same\n}\n\nfunction Child({ config }) {\n  console.log(\"Child rendered\"); // logs on every parent render\n  return <div style={{ color: config.color }}>Hello</div>;\n}\n```\n\n# Solutions\n\n**1. Define the object outside the component** (simplest for static data)\n```javascript\nconst DEFAULT_CONFIG = { color: \"blue\" };\n\nfunction Parent() {\n  return <Child config={DEFAULT_CONFIG} />;\n}\n```\n\n**2. Use `useMemo`** (for dynamic/computed objects)\n```javascript\nfunction Parent({ userId }) {\n  const config = useMemo(() => {\n    return { color: \"blue\", userId };\n  }, [userId]); // only rebuild when userId changes\n  \n  return <Child config={config} />;\n}\n```\n\n**3. Use `React.memo` on the child** (prevents re-render if props are shallow-equal)\n```javascript\nconst Child = React.memo(function Child({ config }) {\n  console.log(\"Child rendered\");\n  return <div style={{ color: config.color }}>Hello</div>;\n});\n```\n\nNote: `memo` with objects still compares by reference, so you'd also need `useMemo` on the parent. For true value-based comparison, use a library or custom comparator.\n\n**4. Destructure and pass primitives** (when possible)\n```javascript\nfunction Parent() {\n  return <Child color=\"blue\" />;\n}\n\nfunction Child({ color }) {\n  return <div style={{ color }}>Hello</div>;\n}\n```\n\n**Best practice:** Use option 1 (static object outside) or option 2 (`useMemo` for dynamic data). Option 3 alone doesn't solve it unless combined with option 2."
+    },
+    {
+      "task": "react-rerender",
+      "arm": "terse",
+      "rep": 1,
+      "loop_output_tokens": 646,
+      "num_turns": 1,
+      "error": null,
+      "result": "# Inline Objects Cause Re-renders\n\n**The problem:** When you create an object inside JSX like `<Child data={{ foo: 'bar' }} />`, a *new* object is created on every render. React compares props using reference equality (`===`), so even if the content is identical, the new reference makes React think the prop changed. This triggers an unnecessary re-render of the child.\n\n```jsx\n// ❌ Child re-renders every time Parent renders, even if data is the same\nfunction Parent() {\n  return <Child data={{ id: 1, name: 'Alice' }} />;\n}\n```\n\n# Solutions\n\n**1. Move it outside (simplest if it doesn't depend on state/props)**\n```jsx\nconst DEFAULT_DATA = { id: 1, name: 'Alice' };\n\nfunction Parent() {\n  return <Child data={DEFAULT_DATA} />;\n}\n```\n\n**2. Use `useMemo` (if the object depends on state/props)**\n```jsx\nfunction Parent({ id }) {\n  const data = useMemo(() => ({ id, name: 'Alice' }), [id]);\n  return <Child data={data} />;\n}\n```\n\n**3. Memoize the child component (if Child is expensive to render)**\n```jsx\nconst Child = React.memo(({ data }) => {\n  // only re-renders if 'data' reference actually changes\n  return <div>{data.name}</div>;\n});\n```\n\n**Pick based on your constraint:**\n- Constant object → move outside\n- Dynamic object → `useMemo`\n- Want to prevent child re-renders altogether → `React.memo` the child\n\nSame logic applies to inline arrays and inline function props (`onClick={() => handler()}`)."
+    },
+    {
+      "task": "react-rerender",
+      "arm": "terse",
+      "rep": 2,
+      "loop_output_tokens": 556,
+      "num_turns": 1,
+      "error": null,
+      "result": "**Why it re-renders:**\n\nReact uses referential equality for prop comparison. Each time the parent renders, an inline object literal `{}` creates a *new* object in memory—even if its contents are identical. A child component wrapped in `React.memo()` or using shallow prop comparison sees a different object reference and re-renders unnecessarily.\n\n```jsx\n// Bad: new object every render\n<Child config={{ name: 'foo', id: 1 }} />\n\n// Parent re-renders → new config object created → Child re-renders\n// even though the actual values are the same\n```\n\n**How to prevent it:**\n\n**1. Move the object outside the component** (simplest, when possible):\n```jsx\nconst CONFIG = { name: 'foo', id: 1 };\n\nfunction Parent() {\n  return <Child config={CONFIG} />;\n}\n```\n\n**2. Memoize with `useMemo`** (when the object depends on dynamic values):\n```jsx\nfunction Parent({ userId }) {\n  const config = useMemo(() => ({ name: 'foo', userId }), [userId]);\n  return <Child config={config} />;\n}\n```\n\n**3. Wrap the child in `React.memo`** (if you control the child):\n```jsx\nconst Child = React.memo(({ config }) => {\n  return <div>{config.name}</div>;\n});\n```\n\nMemoization alone doesn't prevent the object from being created—it prevents the child from re-rendering when the object reference is the same. `useMemo` + `React.memo` together are the full solution for expensive child renders.\n\n**TL;DR:** Inline objects break referential equality → unnecessary re-renders. Use `useMemo` to stabilize references, or move static objects outside the render path."
+    },
+    {
+      "task": "react-rerender",
+      "arm": "terse",
+      "rep": 3,
+      "loop_output_tokens": 629,
+      "num_turns": 1,
+      "error": null,
+      "result": "When you pass an inline object as a prop, React re-renders the child component on every render of the parent because **each time the parent renders, a new object reference is created**.\n\nReact uses shallow equality checks (`Object.is()`) to determine if props have changed. Two objects are only equal if they're the *same reference in memory*. A new inline object `{ foo: 'bar' }` is a different reference every render, so React sees it as a \"changed\" prop and re-renders the child.\n\n**How to prevent it:**\n\n1. **Move the object outside the component** (best for static data)\n```jsx\nconst CONFIG = { color: 'red', size: 10 };\n\nfunction Parent() {\n  return <Child config={CONFIG} />;\n}\n```\n\n2. **Use `useMemo`** (best when the object depends on props/state)\n```jsx\nfunction Parent({ userId }) {\n  const config = useMemo(() => ({ userId, theme: 'dark' }), [userId]);\n  return <Child config={config} />;\n}\n```\n\n3. **Use `useCallback` for object factories** (for function props that return objects)\n```jsx\nfunction Parent() {\n  const getConfig = useCallback(() => ({ foo: 'bar' }), []);\n  return <Child getConfig={getConfig} />;\n}\n```\n\n4. **Memoize the child component** with `React.memo()` (prevents re-render if props are shallowly equal)\n```jsx\nconst Child = React.memo(({ config }) => <div>{config.color}</div>);\n```\n\nMost common fix: use `useMemo` if the object depends on dynamic values, or hoist it outside if it's static. `React.memo()` helps but doesn't solve the root cause."
+    },
+    {
+      "task": "react-rerender",
+      "arm": "terse",
+      "rep": 4,
+      "loop_output_tokens": 822,
+      "num_turns": 1,
+      "error": null,
+      "result": "## Why it happens\n\nWhen you pass an inline object as a prop:\n\n```jsx\n<Child config={{ name: 'foo', value: 42 }} />\n```\n\nA **new object is created on every render**. Even though the object's contents are identical, JavaScript compares objects by *reference*, not value. So:\n\n```javascript\n{ name: 'foo' } === { name: 'foo' }  // false — different objects in memory\n```\n\nIf the child component uses `React.memo()`, has a dependency array that includes the prop, or checks `prevProps.config !== nextProps.config`, it sees a \"new\" prop on every render and re-renders unnecessarily.\n\n## Solutions\n\n**1. Memoize with `useMemo`** (best for dynamic values)\n\n```jsx\nfunction Parent() {\n  const config = useMemo(() => ({ name: 'foo', value: 42 }), []);\n  return <Child config={config} />;\n}\n```\n\n**2. Define outside the component** (best for static values)\n\n```jsx\nconst CONFIG = { name: 'foo', value: 42 };\n\nfunction Parent() {\n  return <Child config={CONFIG} />;\n}\n```\n\n**3. Memoize with dependencies** (if the object depends on props/state)\n\n```jsx\nfunction Parent({ id }) {\n  const config = useMemo(() => ({ id, name: 'foo' }), [id]);\n  return <Child config={config} />;\n}\n```\n\n**4. Use `React.memo()` on the child** with custom comparison\n\n```jsx\nconst Child = React.memo(\n  ({ config }) => <div>{config.name}</div>,\n  (prev, next) => prev.config.name === next.config.name  // compare what matters\n);\n```\n\nThe key: ensure the object reference stays stable across renders unless the object's *content* actually changed."
+    },
+    {
+      "task": "react-rerender",
+      "arm": "flint",
+      "rep": 0,
+      "loop_output_tokens": 504,
+      "num_turns": 1,
+      "error": null,
+      "result": "React compares props by reference, not by value. When you pass `{ foo: 'bar' }` inline, a fresh object is created every render cycle—even though its contents are identical. React sees a new reference and treats it as a prop change, triggering a re-render of any child component consuming that prop or wrapped in `React.memo()`.\n\n**Fix it with `useMemo`:**\n```javascript\nconst MyComponent = ({ onConfig }) => {\n  const config = useMemo(() => ({ foo: 'bar' }), []);\n  return <Child config={config} />;\n};\n```\n\n**Or hoist it outside the component:**\n```javascript\nconst CONFIG = { foo: 'bar' };\n\nconst MyComponent = ({ onConfig }) => {\n  return <Child config={CONFIG} />;\n};\n```\n\nHoist when the object is static. Use `useMemo` when it depends on props/state (pass those as the dependency array). Without either, you're creating a new reference on every render, so `React.memo()` on the child won't help—the parent will always pass a different object and force a re-render."
+    },
+    {
+      "task": "react-rerender",
+      "arm": "flint",
+      "rep": 1,
+      "loop_output_tokens": 557,
+      "num_turns": 1,
+      "error": null,
+      "result": "**Why:** React compares props by reference. Each render, a new inline object `{ foo: 'bar' }` is a *different object in memory*, so React sees it as changed and re-renders the child—even if the properties are identical.\n\n```javascript\n// Parent renders\nfunction Parent() {\n  return <Child config={ { foo: 'bar' } } />  // new object each time\n}\n```\n\nEach time Parent renders, `config` prop is a fresh object. React's shallow comparison `oldProps.config === newProps.config` fails, triggering Child re-render.\n\n**How to prevent:**\n\n**1. Extract outside (simplest):**\n```javascript\nconst CONFIG = { foo: 'bar' }\n\nfunction Parent() {\n  return <Child config={CONFIG} />\n}\n```\n\n**2. Memoize with `useMemo` (if config depends on state):**\n```javascript\nfunction Parent({ value }) {\n  const config = useMemo(() => ({ foo: value }), [value])\n  return <Child config={config} />\n}\n```\n\n**3. Wrap Child with `memo()` (if this is the only expensive prop):**\n```javascript\nconst Child = memo(({ config }) => ...)\n```\n\nPick #1 first. Use #2 if config must compute from props/state. #3 only if Child is genuinely expensive and you can't extract/memoize the prop itself."
+    },
+    {
+      "task": "react-rerender",
+      "arm": "flint",
+      "rep": 2,
+      "loop_output_tokens": 530,
+      "num_turns": 1,
+      "error": null,
+      "result": "**The mechanism:** Inline objects are created fresh on every render, so their reference changes each time. React compares props by reference identity, not by value, so it sees `{foo: 1}` today and a *different* `{foo: 1}` tomorrow as different props. Child component re-renders because its prop reference changed.\n\n**To prevent it:**\n\nMove the object outside if it's static:\n```jsx\nconst config = { foo: 1, bar: 2 }\n\nfunction Parent() {\n  return <Child config={config} />\n}\n```\n\nOr memoize it if it depends on state:\n```jsx\nfunction Parent({ userId }) {\n  const config = useMemo(() => ({ userId, mode: 'read' }), [userId])\n  return <Child config={config} />\n}\n```\n\nOr pass individual props instead:\n```jsx\n<Child foo={1} bar={2} />\n```\n\nThe first is best (static object outside). Use `useMemo` only if the object depends on values that change. Avoid `React.memo` on the child unless you know re-renders are actually expensive; memoization has overhead too."
+    },
+    {
+      "task": "react-rerender",
+      "arm": "flint",
+      "rep": 3,
+      "loop_output_tokens": 554,
+      "num_turns": 1,
+      "error": null,
+      "result": "Objects are compared by reference in JavaScript, not by value. An inline object `{ id: 1 }` creates a new object on every render, so even though the data is identical, React sees it as a different prop and re-renders the child component.\n\n```jsx\n// Re-renders on every render because a new object is created each time\n<Child config={{ id: 1, name: \"test\" }} />\n\n// Fix: define outside or memoize\nconst config = { id: 1, name: \"test\" };\n<Child config={config} />\n```\n\nOther approaches: wrap in `useMemo` if the object must be inline (`useMemo(() => ({ id: 1 }), [])`) or memoize the child component itself with `React.memo` if it has heavy work inside.\n\nThe root issue is that React's shallow comparison sees a new object reference, not matching data identity. Object identity changes → prop changed → re-render."
+    },
+    {
+      "task": "react-rerender",
+      "arm": "flint",
+      "rep": 4,
+      "loop_output_tokens": 520,
+      "num_turns": 1,
+      "error": null,
+      "result": "**Why:** JavaScript object equality is reference-based. Each render creates a new object in memory, so `{x: 1}` on render 1 ≠ `{x: 1}` on render 2. The child sees a \"new\" prop and re-renders, even though the value is logically identical.\n\n**How to prevent:**\n\n1. **Move it outside** (simplest):\n```javascript\nconst config = {x: 1};\nfunction Parent() {\n  return <Child config={config} />;\n}\n```\n\n2. **Memoize it** (if it depends on state):\n```javascript\nfunction Parent({y}) {\n  const config = useMemo(() => ({x: y}), [y]);\n  return <Child config={config} />;\n}\n```\n\n3. **Memoize the child** (if you can't fix the prop):\n```javascript\nconst Child = React.memo(({config}) => ...);\n```\n\nUse #1 if the object doesn't change. Use #2 if it depends on props/state. Use #3 only if you control the child and want to skip its render entirely — it doesn't fix the prop churn, just lets the child ignore it."
+    },
+    {
+      "task": "conn-pool",
+      "arm": "baseline",
+      "rep": 0,
+      "loop_output_tokens": 535,
+      "num_turns": 1,
+      "error": null,
+      "result": "**What it is:** Connection pooling maintains a pre-established set of database connections and reuses them across requests instead of opening a new connection for each query.\n\n**The problem it solves:**\n\nOpening a fresh database connection is expensive. It requires:\n- TCP handshake with the database server\n- Authentication\n- Session initialization\n\nIf your app opens and closes connections for every request, you waste cycles on setup/teardown. Under load, connection startup becomes a bottleneck.\n\n**Why it helps:**\n\n1. **Reduced overhead** — reusing connections skips the expensive handshake and auth for every operation.\n\n2. **Better throughput** — with a pool of ready connections, requests get a connection immediately instead of waiting for one to establish.\n\n3. **Controlled resource usage** — a pool caps the max connections (e.g., 10 or 20), preventing your app from exhausting the database or local system limits.\n\n4. **Fault isolation** — if one connection fails, you drop it and grab another from the pool; your app doesn't crash.\n\n**How it works:** A pool manager holds idle connections. When your code needs one, it checks out a connection, runs the query, and returns it to the pool. If all connections are busy, new requests queue briefly. When a connection sits idle too long, it may be culled.\n\n**Example:** Without pooling, 100 concurrent requests = 100 connection setups. With a pool of 10, those 100 requests queue against 10 reused connections, 10x fewer handshakes and authentications.\n\nMost databases (PostgreSQL, MySQL, etc.) and frameworks (Node, Rails, etc.) recommend pooling for any app beyond toy projects."
+    },
+    {
+      "task": "conn-pool",
+      "arm": "baseline",
+      "rep": 1,
+      "loop_output_tokens": 659,
+      "num_turns": 1,
+      "error": null,
+      "result": "Database connection pooling is a technique where a pool of pre-established database connections is maintained and reused across requests, rather than creating a fresh connection each time you need to query the database.\n\n**How it works:**\n\nWhen your application starts, the pool creates a set number of connections (say, 10). When a request needs to hit the database, it grabs an available connection from the pool, uses it, then returns it when done. If all connections are in use, the request waits for one to free up. Unused connections are kept alive so they're ready instantly.\n\n**Why it helps:**\n\n1. **Connection overhead is expensive.** Creating a new TCP connection to a database involves authentication handshakes, security setup, and initialization. This takes real time (often 10s-100s of milliseconds). Pooling eliminates this per-request.\n\n2. **Memory efficient.** Each connection consumes server memory. A pool with 10 connections uses far less memory than creating, say, 1,000 temporary connections if you have 1,000 concurrent requests.\n\n3. **Prevents resource exhaustion.** Databases have a max connection limit. Without pooling, a traffic spike could spawn thousands of connection attempts, exhausting the database's capacity and causing connection refused errors. A pool caps concurrent connections at a reasonable number.\n\n4. **Better throughput under load.** Instead of thrashing on connection creation, you're reusing existing connections. This scales linearly with pool size up to the database's capacity.\n\n5. **Connection stability.** Pooling monitors connection health; it can detect dead connections and replace them silently, rather than your app getting a surprise failure.\n\n**Typical setup:**\n\nMost frameworks handle this for you. In Node.js with a Postgres pool, you might see:\n\n```javascript\nconst pool = new Pool({ max: 20 }); // max 20 concurrent connections\nconst result = await pool.query('SELECT * FROM users WHERE id = $1', [id]);\n```\n\nThe pool manages the lifecycle; your code just asks for a query and gets one. In production, the pool size is tuned based on concurrency needs and database limits — too small and you bottleneck, too large and you waste resources."
+    },
+    {
+      "task": "conn-pool",
+      "arm": "baseline",
+      "rep": 2,
+      "loop_output_tokens": 645,
+      "num_turns": 1,
+      "error": null,
+      "result": "**Database connection pooling** is a technique where a set number of database connections are created and maintained in advance, then reused across multiple application requests rather than creating a new connection for each request.\n\n## How it works\n\nInstead of:\n1. App needs data → create a connection → execute query → close connection\n2. Next request → repeat from step 1\n\nWith pooling:\n1. Pool maintains (say) 5-20 pre-opened connections to the database\n2. App request arrives → grab an idle connection from pool → execute query → return connection to pool\n3. Next request reuses that returned connection\n\n## Why it helps\n\n**Performance.** Connection creation is expensive — it involves TCP handshakes, authentication, and transaction setup. This can take 50-500ms depending on network latency and database. Reusing connections amortizes that cost across many requests. A pooled connection is available in microseconds.\n\n**Resource efficiency.** Databases have limits on concurrent connections (often 100-500 per instance). Without pooling, each application request that needs the database consumes one slot. A pool lets you cap how many slots your app uses — e.g., a pool of 10 connections means your app never holds more than 10 slots, even under high load. The pool queues excess requests until a connection frees up.\n\n**Prevents connection exhaustion.** Without pooling, a traffic spike can cause your app to try to open 1000+ connections at once, overwhelming the database and your own memory. A pool acts as a circuit breaker.\n\n**Better observability.** Pools make it easy to monitor: how many connections are active, how many are idle, are requests getting queued waiting for a connection? That tells you if you've sized the pool correctly.\n\n## Common pool implementations\n\n- **node-postgres** (`pg` library) has `Pool`\n- **SQLAlchemy** (Python) has `QueuePool`\n- **HikariCP** (Java) is the de facto standard\n- **Netlify DB** (managed Postgres) handles pooling server-side via PgBouncer\n\nThe sweet spot is usually: pool size = 2-4 × number of CPU cores on your app server. Too small and requests queue; too large and you waste database memory."
+    },
+    {
+      "task": "conn-pool",
+      "arm": "baseline",
+      "rep": 3,
+      "loop_output_tokens": 611,
+      "num_turns": 1,
+      "error": null,
+      "result": "## Connection Pooling\n\n**What it is:** Connection pooling maintains a set of pre-opened database connections that applications reuse rather than creating a new connection for each request. When your code needs to query the database, it borrows a connection from the pool, uses it, then returns it instead of closing it.\n\n**Why it helps:**\n\n1. **Eliminate connection startup overhead** — Opening a database connection is expensive. It requires a TCP handshake, SSL negotiation, authentication, and server resource allocation. Reusing connections avoids this per-request cost, which compounds at scale.\n\n2. **Reduce database server load** — Each connection consumes server memory and resources. Without pooling, high traffic creates hundreds or thousands of simultaneous connections. With pooling, you maintain a small fixed set (typically 10-20) shared across all requests, freeing server resources for actual query processing.\n\n3. **Better response latency** — Borrowed connections are instantly available. Creating new connections adds 10-100ms of latency per request; pooling eliminates this delay.\n\n4. **Prevent connection exhaustion** — Databases have a max connection limit. Under spiky traffic without pooling, you hit the limit and new requests fail immediately. Pooling queues excess requests to wait for an available connection rather than rejecting them.\n\n5. **Resource predictability** — You set a pool size (e.g., \"max 20 connections\") and the system respects that ceiling, making capacity planning and cost predictable.\n\n**Example impact:** A Node.js server handling 100 concurrent requests without pooling might create 100 connections to the database. With a pool of 10, those 100 requests share and reuse the same 10 connections, dropping server memory use dramatically and freeing the database to serve more queries per connection instead of managing connection overhead.\n\nMost modern ORMs and database drivers (Drizzle, TypeORM, Prisma, pg, redis, etc.) include pooling built-in with sensible defaults."
+    },
+    {
+      "task": "conn-pool",
+      "arm": "baseline",
+      "rep": 4,
+      "loop_output_tokens": 559,
+      "num_turns": 1,
+      "error": null,
+      "result": "# Database Connection Pooling\n\n**What it is:** Connection pooling maintains a pre-allocated set of open database connections ready to use, rather than creating a fresh connection for every request. When code needs database access, it borrows a connection from the pool, uses it, then returns it when done.\n\n**How it works:**\n- Pool starts with N idle connections (e.g., 10)\n- Request arrives → pool lends a connection from the idle set\n- Code executes query → connection is used\n- Code finishes → connection returns to the pool (still open, ready for reuse)\n- No connection is fully closed/reopened unless pool is destroyed\n\n**Why it helps:**\n\n1. **Connection creation is expensive.** Opening a new database connection involves: TCP handshake, authentication, initial setup. This can take 100ms+. Reusing open connections drops latency to ~1ms.\n\n2. **Limits resource exhaustion.** Databases have a maximum connection limit (often 100-1000). Without pooling, each concurrent request might spawn its own connection. Pooling caps total connections (e.g., 10) and queues requests, preventing \"too many connections\" crashes.\n\n3. **Improves throughput.** Multiple requests share the same 10 connections instead of serially opening/closing, so more work happens in parallel without overwhelming the database.\n\n4. **Reduces memory and CPU on the database.** Each open connection consumes server RAM and context-switching overhead. A pool of 10 is far lighter than 1000 momentary connections.\n\n**Real example:** An API endpoint handles 1000 requests/second. Without pooling, each request opens a connection (expensive) and risks hitting the DB's 500-connection limit. With a 20-connection pool, all 1000 requests share those 20 connections, each request waits ~microseconds for a turn, and the database stays stable.\n\nMost frameworks (Rails, Django, Node.js) include pooling out of the box. For Netlify projects, libraries like `@netlify/neon` (for Netlify DB) and ORMs like Drizzle handle pooling automatically."
+    },
+    {
+      "task": "conn-pool",
+      "arm": "terse",
+      "rep": 0,
+      "loop_output_tokens": 523,
+      "num_turns": 1,
+      "error": null,
+      "result": "**Connection pooling** maintains a set of reusable database connections that applications borrow and return, rather than creating a new connection for each query.\n\n## How it works\n\n1. Pool initializes with N idle connections at startup\n2. App requests a connection → gets one from the pool (or waits if all are in use)\n3. App uses it, then returns it to the pool\n4. Connection stays open and ready for the next request\n\n## Why it helps\n\n**Cost of creating connections is high.** TCP handshakes, authentication, TLS setup, and driver initialization take 10-100ms per connection. Without pooling, a typical web request spawning 3-5 queries would waste hundreds of milliseconds just opening and closing connections.\n\n**Limits resource exhaustion.** Databases have finite connections (typically hundreds or low thousands). Without pooling, a server under load spawns unlimited connection attempts, hitting the limit fast and causing new requests to fail. A pool caps this: you define max connections upfront and queue excess requests.\n\n**Improves latency and throughput.** Reusing existing connections eliminates handshake overhead. An app that borrows a warm connection executes queries milliseconds faster than one that negotiates a fresh connection.\n\n**Isolates database from application scaling.** The pool shields the database from connection storms. A 1000-concurrent-request spike doesn't create 1000 database connections; it queues against the pool size and releases smoothly as earlier requests complete.\n\nMost frameworks and ORMs (Drizzle, SQLAlchemy, ActiveRecord) include pooling by default. Netlify DB and serverless platforms run their own connection proxies to multiplex hundreds of lambdas/functions onto a smaller set of database connections—the same principle at infrastructure scale."
+    },
+    {
+      "task": "conn-pool",
+      "arm": "terse",
+      "rep": 1,
+      "loop_output_tokens": 488,
+      "num_turns": 1,
+      "error": null,
+      "result": "## Connection Pooling: What & Why\n\n**What it is:**\nA pool maintains a set of open database connections that applications reuse instead of creating a new connection for each query. When a query finishes, the connection returns to the pool rather than closing.\n\n**Why it helps:**\n\n1. **Eliminates connection overhead.** Opening a DB connection is expensive: TCP handshake, authentication, session setup. Pooling amortizes this cost across many queries. Reusing an open connection is orders of magnitude faster than creating one.\n\n2. **Bounds resource usage.** Without pooling, a spike in traffic spawns a spike in connections, each consuming memory and file descriptors on both client and server. A pool caps connections at a configured max, protecting both sides from exhaustion.\n\n3. **Improves throughput.** Instead of queueing while new connections initialize, requests can acquire an idle connection immediately. The pool acts as a buffer.\n\n4. **Stabilizes latency.** Connection acquisition time becomes predictable; you're not waiting for the DB to accept a new connection under load.\n\n**Simple model:**\n```\nWithout pooling: request → open connection → query → close → repeat\n                 (expensive per request)\n\nWith pooling:    pool holds 5 open connections\n                 request → grab idle connection → query → return to pool\n                 (fast, bounded resources)\n```\n\nThe pool size is tuned per workload—too small and you queue; too large and you waste memory. Most frameworks (Node's `pg`, Django's connection pooling, Java's HikariCP) handle this transparently."
+    },
+    {
+      "task": "conn-pool",
+      "arm": "terse",
+      "rep": 2,
+      "loop_output_tokens": 496,
+      "num_turns": 1,
+      "error": null,
+      "result": "Database connection pooling maintains a set of open database connections that can be reused across multiple requests, instead of creating and destroying a new connection for each operation.\n\n**How it works:** When your app needs a database query, it borrows a connection from the pool, executes the query, then returns the connection to the pool for the next request to use. Idle connections stay open and ready.\n\n**Why it helps:**\n\n1. **Reduces connection overhead.** Creating a new database connection is expensive—it involves network handshakes, authentication, and memory allocation. Reusing connections saves that cost on every request.\n\n2. **Improves response time.** Your app gets a ready-to-use connection from the pool in milliseconds instead of negotiating a fresh one, which can take hundreds of milliseconds.\n\n3. **Prevents connection exhaustion.** Databases have a maximum number of concurrent connections. Without pooling, high traffic can hit that limit and cause connection rejections. A pool caps how many connections your app opens, preventing cascading failures.\n\n4. **Enables better resource management.** The pool acts as a governor, controlling total connections to the database regardless of how many concurrent requests your app handles. This protects the database from being overwhelmed.\n\n5. **Allows connection reuse across requests.** In web apps with multiple requests per second, a small pool of 10-20 connections handles thousands of requests over time by recycling the same connections.\n\n**Trade-off:** Pools add a small latency to acquire a connection and require memory to keep connections alive, but this cost is tiny compared to the savings from avoiding connection creation overhead."
+    },
+    {
+      "task": "conn-pool",
+      "arm": "terse",
+      "rep": 3,
+      "loop_output_tokens": 529,
+      "num_turns": 1,
+      "error": null,
+      "result": "Database connection pooling maintains a reusable set of open database connections instead of creating and destroying a new connection for each request.\n\n**How it works:**\n\nWhen your app needs a database query, it borrows an available connection from the pool, uses it, then returns it. If all connections are in use, the request waits until one becomes available (or fails, depending on configuration).\n\n**Why it helps:**\n\n1. **Performance** — Opening a new connection is expensive: TCP handshake, authentication, session setup. Reusing connections skips this overhead. For high-traffic apps, this difference is massive.\n\n2. **Resource efficiency** — The database has limited connection slots. Without pooling, each concurrent user/request creates a new connection, exhausting the limit quickly. A pool caps total connections while serving many more users via connection reuse.\n\n3. **Throughput** — By keeping connections open and ready, throughput stays high even during traffic spikes. Without pooling, you'd burn time constantly opening/closing connections instead of executing queries.\n\n4. **Cost** — Fewer open connections means lower memory and CPU usage on the database side, reducing infrastructure costs.\n\n**Example scenario:**\n\n- Without pooling: 1000 concurrent web requests → 1000 database connections needed. Database maxes out at 256 connections. You hit the limit, connections fail.\n- With pooling (size 20): 1000 concurrent requests → all share 20 connections by queuing. Each connection handles ~50 requests sequentially. Database stays healthy, throughput is predictable.\n\nMost modern frameworks and database clients include pooling built-in (Node's `pg`, Python's `sqlalchemy`, Ruby's `ActiveRecord`). You configure pool size based on your connection limit and expected concurrency."
+    },
+    {
+      "task": "conn-pool",
+      "arm": "terse",
+      "rep": 4,
+      "loop_output_tokens": 559,
+      "num_turns": 1,
+      "error": null,
+      "result": "Connection pooling maintains a set of pre-opened database connections that your application reuses instead of creating and destroying a connection for each request.\n\n**How it works:**\n- The pool opens N connections at startup (or as needed up to a limit).\n- When your app needs to query, it checks out an idle connection from the pool, uses it, then returns it.\n- Connections stay open and ready, avoiding the overhead of establishing new ones.\n\n**Why it helps:**\n\n1. **Eliminates connection setup cost** — Opening a TCP connection, authenticating, and handshaking with the database is expensive (10s-100s of ms). Reusing existing connections is orders of magnitude faster.\n\n2. **Prevents resource exhaustion** — Without pooling, a busy app could spawn hundreds or thousands of connections, consuming database memory, file descriptors, and causing the server to reject new connections. A pool caps this at a sensible limit (e.g., 10-20 connections).\n\n3. **Improves throughput** — Many requests can share the same connections. A 10-connection pool can handle far more than 10 concurrent requests because most queries are fast; connections spend most time idle and get reused.\n\n4. **Reduces database load** — Fewer total connections means fewer authentication rounds, less memory pressure, and more efficient use of database resources.\n\n**Real example:**\nWithout pooling: 1000 requests/sec each opens a connection (setup overhead) → database struggles, some requests timeout or fail.\n\nWith pooling: 1000 requests/sec share 10-20 open connections → requests queue briefly, reuse existing connections, database handles it easily.\n\nMost ORMs and database drivers (Node's `pg`, Python's `psycopg2`, etc.) include pooling by default or as an option. For serverless functions, you often use a proxy like PgBouncer to share a limited pool across multiple function instances."
+    },
+    {
+      "task": "conn-pool",
+      "arm": "flint",
+      "rep": 0,
+      "loop_output_tokens": 510,
+      "num_turns": 1,
+      "error": null,
+      "result": "**Connection pooling** maintains a cache of open database connections rather than creating/destroying one per request. When your app needs a query, it checks out an idle connection from the pool; when done, it returns it for reuse.\n\n**Why it helps:**\n\n1. **Avoids connection overhead.** Opening a DB connection is expensive—TCP handshake, auth, session setup. Reusing existing connections cuts request latency dramatically, especially under high concurrency.\n\n2. **Controls resource exhaustion.** Without pooling, each concurrent request spawns a new connection; 1000 concurrent requests = 1000 open connections, which chokes the database and OS. A pool caps this (e.g., 10-20 connections serve 1000 requests by queueing; when a connection frees, the next waiting request uses it).\n\n3. **Improves throughput.** Fewer contexts/file descriptors in flight + lower per-request latency = more requests/sec your app can handle with stable resource use.\n\nThe trade: pooling adds a small queueing cost under extreme load and requires picking pool size right (too small and requests wait; too large and you're holding idle connections). Most libraries (psycopg3, node-postgres, Rails, Django, Go's sql package) have built-in pooling; tune it once per deployment context and forget."
+    },
+    {
+      "task": "conn-pool",
+      "arm": "flint",
+      "rep": 1,
+      "loop_output_tokens": 521,
+      "num_turns": 1,
+      "error": null,
+      "result": "**What it is:** A pool keeps a set of open database connections ready. When a request needs the DB, it grabs an idle connection from the pool, runs its query, and returns the connection. No teardown.\n\n**Why it helps:**\n- **Eliminates handshake cost.** Opening a DB connection (TCP handshake, auth, session init) is expensive. Closing it is expensive. Pooling runs both once at startup, then reuses the same connections.\n- **Reduces latency.** Requests get a hot connection instantly instead of waiting for a new one to establish.\n- **Bounds resource use.** A pool of 10 connections caps concurrent DB work at 10; excess requests queue and wait. Without pooling, a spike in traffic spawns runaway connections, exhausting the server.\n- **Handles concurrency cleanly.** Multiple requests share the same small set of connections instead of each burning one; the OS isn't managing hundreds of idle sockets.\n\nCommon pool sizes: 5–20 connections for most apps. Too large and you waste memory/file descriptors; too small and requests queue. Tune based on workload (concurrent users × query duration).\n\nMost DB libraries ship pooling built-in; many frameworks wire it by default. For APIs or high-concurrency services, it's not optional."
+    },
+    {
+      "task": "conn-pool",
+      "arm": "flint",
+      "rep": 2,
+      "loop_output_tokens": 553,
+      "num_turns": 1,
+      "error": null,
+      "result": "Connection pooling maintains a reusable set of database connections instead of creating and destroying them per request. When a query needs to run, the app borrows a connection from the pool, uses it, then returns it. When done, it's ready for the next request.\n\n**Why it helps:**\n\nCreating a connection is expensive: TCP handshake, auth negotiation, memory setup. Tearing it down is too. With thousands of requests/sec, that overhead compounds. A pool amortizes this cost by reusing connections.\n\n**Practical impact:**\n\n- Latency: no per-request connection startup (~50-200ms per new connection).\n- Throughput: connections become a scarce resource you size once, not create on-demand. Without a pool, connection count grows without bound and exhausts the DB.\n- Resource control: pool size is explicit and tuned to your workload (e.g., 10-50 connections for a typical web server). The DB can plan. The app doesn't leak connections by accident.\n\nMost frameworks ship connection pooling built-in (`ActiveRecord`, `psycopg2`, Node's `pg`, etc.). You configure pool size (how many connections to keep warm) and timeout (how long to wait if all are in use), then don't think about it again.\n\nWithout pooling, a 10K request/sec load would require 10K connections to the DB. With a 20-connection pool, each connection handles ~500 requests/sec by reuse. That's why pooling is non-negotiable for production databases."
+    },
+    {
+      "task": "conn-pool",
+      "arm": "flint",
+      "rep": 3,
+      "loop_output_tokens": 450,
+      "num_turns": 1,
+      "error": null,
+      "result": "Connection pooling maintains a set of already-open database connections and reuses them across requests, instead of opening a fresh connection for each query.\n\n**Why it helps:**\n\nOpening a connection is expensive. It requires a TCP handshake, authentication, and initialization—often 10-100ms per connection. If you open and close a connection per request, that overhead dominates latency, especially under load.\n\nPooling amortizes that cost: open M connections once, then hand them out and take them back. A request grabs a connection from the pool (instant), runs the query, returns it. The next request reuses it. You pay the opening cost once per connection, not per request.\n\nSide benefits: connection limits are explicit (no runaway client opening 10k connections), and you can tune pool size to your load (too small = requests wait, too large = waste memory).\n\nStandard in production: every web framework (Rails, Django, Node) ships with pooling enabled by default, and every database driver supports it. Typically set pool size to a modest number tied to concurrency—Postgres usually 5-20 per process."
+    },
+    {
+      "task": "conn-pool",
+      "arm": "flint",
+      "rep": 4,
+      "loop_output_tokens": 479,
+      "num_turns": 1,
+      "error": null,
+      "result": "**Connection pooling** maintains a cache of open database connections; instead of opening a new connection per request, code checks one out from the pool and returns it when done.\n\n**Why it helps:**\n\nOpening a database connection is expensive. TCP handshake, authentication, resource allocation on server — it's hundreds of milliseconds. Under load, if every request opens a fresh connection, you spend more time establishing connections than running queries. The pool amortizes that cost: open N connections at startup (or lazily, on demand up to a limit), reuse them, drain them during idle periods.\n\n**The payoff:**\n- Requests get a connection in microseconds instead of hundreds of milliseconds\n- Database isn't hammered by connection overhead; under load it stays bounded at pool size instead of growing unbounded with request count\n- Per-connection memory on the DB side (auth state, session context) is reused, not thrashed\n\nWithout pooling, 100 concurrent requests = 100 new connections to the DB. With a 10-connection pool, same 100 requests queue and consume connections sequentially, but the database sees only 10 active connections. The trade-off: requests queue briefly, but the DB stays healthy and throughput overall is higher."
+    },
+    {
+      "task": "index-scan",
+      "arm": "baseline",
+      "rep": 0,
+      "loop_output_tokens": 673,
+      "num_turns": 1,
+      "error": null,
+      "result": "A SQL database chooses between an index and a full table scan based on a **cost optimizer** that estimates which approach is faster. Here's the decision logic:\n\n## Index Scan (Preferred When)\n\n- **Selective query**: filtering returns a small percentage of rows (typically <5-15% depending on the database)\n- **Indexed columns**: the WHERE clause or JOIN condition references columns with an index\n- **Small result set**: even if the table is large, if you're only retrieving a few rows, the index overhead pays off\n- **Sorted results**: you need results in order and an index provides that naturally (no sort step)\n\n**Example**: `SELECT * FROM users WHERE id = 42` uses an index on `id` because one row out of millions is highly selective.\n\n## Full Table Scan (Preferred When)\n\n- **Low selectivity**: the query returns most or all of the table (>20-40% of rows)\n- **No useful index**: the WHERE clause references non-indexed columns or uses criteria that can't use an index efficiently\n- **Small table**: scanning all 10k rows might be faster than index overhead\n- **Index wouldn't help**: operations like `LIKE '%pattern'` or `column != value` can't use a B-tree index effectively\n\n**Example**: `SELECT * FROM users WHERE age > 18` might scan the whole table if there's no index on `age`, especially if >50% of users are over 18.\n\n## The Optimizer's Trade-off\n\n```\nCost(index) = cost to traverse index + cost to fetch rows from table\nCost(full scan) = cost to read all blocks sequentially\n```\n\nIf a query would fetch 60% of rows via index, the optimizer picks a full scan because:\n1. Sequential disk reads are faster than random seeks\n2. Index overhead (tree traversal + random access) outweighs the benefit\n\n## Forcing Behavior (if needed)\n\n```sql\n-- Force index use (syntax varies by database)\nSELECT * FROM users USE INDEX (idx_age) WHERE age > 18;\n\n-- Force full scan (MySQL/PostgreSQL)\nSELECT /*+ FULL(users) */ * FROM users WHERE age > 18;\n```\n\n**Key insight**: indexes aren't always faster. The database picks based on estimated cost, not whether an index exists. A well-designed query might intentionally use a full scan if that's genuinely cheaper."
+    },
+    {
+      "task": "index-scan",
+      "arm": "baseline",
+      "rep": 1,
+      "loop_output_tokens": 551,
+      "num_turns": 1,
+      "error": null,
+      "result": "A database chooses between an index and a full table scan based on cost estimation — it calculates which approach retrieves the data faster.\n\n**Index is preferred when:**\n- The query filters on an indexed column(s) and expects to match a small percentage of rows\n- A WHERE clause matches the index key: `WHERE user_id = 5` or `WHERE created_at > '2026-01-01'`\n- The index is selective enough that reading the index + fetching matching rows beats scanning the whole table\n- The index avoids reading disk pages you don't need\n\n**Full table scan is chosen when:**\n- No useful index exists for the query\n- The query needs to fetch most/all rows anyway, making the index overhead wasteful\n- A WHERE clause filters on a non-indexed column\n- An indexed column is used but with a low-selectivity predicate: `WHERE is_active = true` when 95% of rows match — scanning is cheaper than index lookup + fetch\n- The table is small enough that reading it all is fast\n\n**The decision is automatic:** the query optimizer estimates row counts and I/O costs, then picks the cheaper path. You can't force it to use an index (though hints exist in some databases).\n\n**Common gotchas:**\n- An index on a highly non-selective column (lots of matches) can be slower than a scan because you do index + row fetch instead of a single sequential read\n- Queries with `OR` across non-indexed columns skip indexes entirely\n- Functions applied to indexed columns often defeat the index: `WHERE YEAR(created_at) = 2026` won't use an index on `created_at`\n- Composite indexes require the leading columns to be used in the filter for the index to be useful\n\nYou can see the actual plan the database chose with `EXPLAIN` (or `EXPLAIN ANALYZE` to see real execution stats), which shows index use, scan type, estimated vs. actual rows, and cost."
+    },
+    {
+      "task": "index-scan",
+      "arm": "baseline",
+      "rep": 2,
+      "loop_output_tokens": 720,
+      "num_turns": 1,
+      "error": null,
+      "result": "A database chooses between an index and a full table scan based on a cost estimate. Here's how it works:\n\n## Index Scan (Fast path)\n\nThe query optimizer uses an index when:\n\n1. **The index matches the query's WHERE clause** — The column(s) you're filtering on have an index, and the database estimates it'll need to read fewer pages than a full scan.\n\n2. **Selectivity is good** — The index eliminates most rows. If a query matches 5% of rows, an index is likely chosen. If it matches 50%, a full scan might be faster (less overhead, better cache behavior).\n\n3. **Cost is lower** — The optimizer estimates: `index pages + row lookups < full table scan pages`. Example: scanning an index to find 100 matching IDs, then fetching those 100 rows, beats scanning 1 million rows.\n\n## Full Table Scan (Simpler path)\n\nThe database does a full scan when:\n\n1. **No useful index exists** — There's no index on the filtered column, or the index doesn't help (e.g., you're searching a text column with `LIKE '%substring%'`).\n\n2. **Selectivity is poor** — The index would eliminate so few rows that sequential reads beat random lookups. A query matching 80% of rows is often faster as a scan.\n\n3. **The table is small** — Scanning 1,000 rows is often faster than index overhead.\n\n4. **You're reading most columns** — If you need all columns anyway, sequential I/O beats index + row lookups.\n\n## Practical example\n\n```sql\n-- Likely uses an index (selectivity ~1%)\nSELECT * FROM users WHERE id = 42;\n\n-- Likely uses an index (selectivity ~5%)\nSELECT * FROM orders WHERE customer_id = 123;\n\n-- Likely a full scan (selectivity ~50%, overhead not worth it)\nSELECT * FROM orders WHERE status = 'pending';\n\n-- Definitely a full scan (no index helps)\nSELECT * FROM products WHERE name LIKE '%blue%';\n```\n\n## How to check\n\nUse `EXPLAIN` (or `EXPLAIN ANALYZE`) to see what the optimizer chose:\n\n```sql\nEXPLAIN SELECT * FROM orders WHERE customer_id = 123;\n-- Output shows \"Index Scan\" or \"Seq Scan\" (full table scan)\n```\n\nThe optimizer isn't always right—if you see a bad plan, you can force an index with hints (syntax varies: `USE INDEX`, `FORCE INDEX`, `/*+ INDEX(...) */`), or fix the statistics, or add a better index."
+    },
+    {
+      "task": "index-scan",
+      "arm": "baseline",
+      "rep": 3,
+      "loop_output_tokens": 873,
+      "num_turns": 1,
+      "error": null,
+      "result": "# Index vs Full Table Scan\n\n## Query Optimizer's Decision\n\nThe database query optimizer chooses based on **cost estimation**: it calculates the expense (I/O + CPU) of each approach and picks the cheaper one. It's not a fixed rule.\n\n## When Indexes Get Used\n\n**Good index candidates:**\n- **Selective predicates** — filtering WHERE clauses that match a small percentage of rows (typically <10-20% depending on the database). If you're finding 100 rows out of 1M, an index is likely worth it.\n- **Large tables** — the bigger the table, the more a full scan costs relative to an indexed lookup.\n- **Sorted/range queries** — `WHERE id = 5`, `WHERE created_at > '2024-01-01'`, `ORDER BY` clauses benefit from indexes.\n\n**Index overhead matters:**\n- Random disk I/O (index lookup) vs sequential I/O (table scan). Sequential is often faster per byte, but scanning millions of rows beats searching a few hundred with an index.\n- Index size and cache. A small index stays in memory; a large, scattered one doesn't.\n\n## When Full Table Scans Happen\n\n**Optimizer picks a scan when:**\n- **Low selectivity** — the WHERE clause matches most of the table anyway. Scanning is simpler and faster than index hops.\n- **Small tables** — below a few thousand rows, scanning memory-resident data is competitive with index overhead.\n- **No useful index** — no index on the filtered column, or the index would need to scan most rows anyway.\n- **Data type mismatches** — `WHERE string_col = 123` may disable the index on `string_col` due to implicit casting.\n- **Functions in predicates** — `WHERE UPPER(name) = 'FOO'` can't use an index on `name` (most databases). Rewrite as `WHERE name = 'foo'` if case-insensitive matching is the goal.\n\n## The Threshold\n\nDatabases use rules of thumb. PostgreSQL, MySQL, and others estimate: if the index would touch more than ~5-40% of rows (varies by engine and config), a full scan is cheaper. This is why a query that's cheap on 100 rows can be slow on 10M—the same index might shift from \"faster\" to \"slower\" as cardinality grows.\n\n## Practical Checks\n\n- **EXPLAIN/EXPLAIN ANALYZE** — see the optimizer's plan and row estimates.\n- **Statistics matter** — if table stats are stale, the optimizer guesses wrong. Run `ANALYZE` (PostgreSQL) or `ANALYZE TABLE` (MySQL) to update.\n- **Covering indexes** — if the index has all columns the query needs, a scan of the index beats touching the table.\n\n**Rule of thumb:** Index narrow, selective filters on large tables. For broad scans or small datasets, a full table scan is often the right call."
+    },
+    {
+      "task": "index-scan",
+      "arm": "baseline",
+      "rep": 4,
+      "loop_output_tokens": 851,
+      "num_turns": 1,
+      "error": null,
+      "result": "# Index vs Full Table Scan\n\nA SQL database chooses between these based on **cost estimation**: the query optimizer estimates which approach requires fewer I/O operations and picks the cheaper one.\n\n## Full Table Scan\nThe database reads every row sequentially from start to finish.\n\n**Used when:**\n- No index exists for the query columns\n- The table is very small (scanning beats the overhead of index lookup)\n- The query returns a large percentage of rows (e.g., `WHERE age > 10` on a mostly-young dataset)\n- An index exists but the optimizer estimates it'd jump around too much (high random I/O cost)\n- Explicit query hint forces it, or statistics are stale\n\n## Index Scan/Seek\nThe database uses an index structure (typically B-tree) to locate relevant rows directly.\n\n**Used when:**\n- An index exists on the filtered/joined columns\n- The query is selective — returns ~5% or fewer rows (varies by DB)\n- Random I/O cost of index jumps is lower than sequential scan of the whole table\n- Index is clustered (primary key) or highly correlated with query conditions\n\n## Decision Logic (Simplified)\n\n```\ncost_full_scan = table_row_count * (sequential_io_per_row)\ncost_index_seek = matching_rows * (random_io_per_lookup) + index_traversal_cost\n\nif cost_index_seek < cost_full_scan:\n  use index\nelse:\n  full scan\n```\n\nThe threshold depends on:\n- **Selectivity** — what % of rows match the condition (lower % favors index)\n- **Index clustering** — is the index sorted like the table layout? (clustered is much cheaper)\n- **Page width** — smaller rows per page means more pages to scan (favors index)\n- **Hardware** — sequential I/O is fast on mechanical drives; random I/O on SSDs is less bad\n- **Statistics freshness** — stale stats cause bad estimates\n\n## Practical Clues\n\n**Index likely chosen:**\n```sql\nWHERE user_id = 42  -- very selective\nWHERE created_at > '2026-01-01' AND created_at < '2026-01-02'  -- narrow range\n```\n\n**Full scan likely chosen:**\n```sql\nSELECT * FROM users  -- no filter\nWHERE status IN ('active', 'pending', 'inactive')  -- matches most rows\n```\n\n**Force a choice** (for testing):\n```sql\n-- PostgreSQL\nEXPLAIN ANALYZE SELECT * FROM users WHERE age > 50;  -- shows chosen plan\n\n-- SQL Server\nSELECT * FROM users WITH (INDEX(idx_age)) WHERE age > 50;  -- force index\nSELECT * FROM users WITH (NOLOCK, TABLOCK) WHERE age > 50;  -- force scan\n```\n\nThe optimizer recalculates this per query, so the same table can be scanned one moment and indexed the next depending on the WHERE clause."
+    },
+    {
+      "task": "index-scan",
+      "arm": "terse",
+      "rep": 0,
+      "loop_output_tokens": 716,
+      "num_turns": 1,
+      "error": null,
+      "result": "A SQL database chooses between an index and a full table scan based on cost estimation. The query optimizer decides which is faster by considering:\n\n**Index is used when:**\n- An index exists on the filtered/joined columns\n- The query is **selective** — the WHERE clause narrows results to a small percentage of rows\n- The index allows the optimizer to avoid reading the entire table\n- Example: `SELECT * FROM users WHERE id = 5` on a 10M-row table with an index on `id` returns 1 row instantly instead of scanning 10M\n\n**Full table scan happens when:**\n- No usable index exists for the query\n- The query is **non-selective** — retrieving a large percentage of the table (the optimizer decides it's cheaper to scan all rows than to use the index)\n- Example: `SELECT * FROM users WHERE active = true` on a table where 80% of rows are active; scanning all rows once beats the overhead of index lookups and random disk seeks\n- The table is tiny (fits in a few disk pages; sequential I/O is actually faster than index lookup)\n- The WHERE clause prevents index use (LIKE with leading wildcard, function calls on the indexed column, type mismatches)\n\n**The key tradeoff:** Index lookup adds overhead (random disk seeks, pointer chasing). If you're already reading most of the table, that overhead isn't worth it. Full scans are sequential, predictable I/O; indexes are random, scattered seeks. For low selectivity queries, sequential wins.\n\n**How to influence the choice:**\n- Add indexes on columns frequently filtered/joined\n- Analyze table statistics so the optimizer has accurate cardinality data\n- Avoid functions/expressions on indexed columns\n- Use `EXPLAIN` / `EXPLAIN ANALYZE` to see what your database is actually doing"
+    },
+    {
+      "task": "index-scan",
+      "arm": "terse",
+      "rep": 1,
+      "loop_output_tokens": 673,
+      "num_turns": 1,
+      "error": null,
+      "result": "A SQL database chooses between an index and a full table scan based on cost estimation. The query planner weighs I/O operations and decides which path is cheaper.\n\n**Index usage** happens when:\n- The query filters a small percentage of rows (typically <5-10%, varies by DB)\n- An index exists on the filtered column(s)\n- The index is selective enough that seeking + random I/O costs less than scanning every row\n\nExample: `SELECT * FROM users WHERE id = 5` uses an index because a primary key lookup is almost always faster than reading 1M rows.\n\n**Full table scan** happens when:\n- The query would return most/all rows anyway (no selectivity gain)\n- No useful index exists on the filter columns\n- The sequential I/O of scanning is cheaper than random seeks\n- The table is small enough that a scan is trivial\n\nExample: `SELECT * FROM users WHERE age > 18` on a 100-row table scans the table instead of using an index, because the overhead isn't worth it.\n\n**The deciding factors:**\n\n| Factor | Favors Index | Favors Scan |\n|--------|--------------|------------|\n| Row selectivity | Very low (<5%) | High (>30%) |\n| Table size | Large | Small |\n| Index quality | Highly selective | Missing/poor |\n| I/O pattern | Random acceptable | Sequential preferred |\n\n**Key insight:** Indexes have overhead (seeking, random I/O, buffer misses). A scan's sequential access is often faster for bulk reads. The planner calculates the cost: `index cost = seeks + random I/O`, `scan cost = sequential I/O`. It picks whichever is lower.\n\nYou can see the planner's decision with `EXPLAIN` (most DBs):\n\n```sql\nEXPLAIN SELECT * FROM users WHERE id = 5;\n-- Shows \"Index Scan\" or \"Seq Scan\"\n\nEXPLAIN SELECT * FROM users WHERE age > 18;\n-- May show \"Seq Scan\" if age > 18 matches many rows\n```\n\nMost modern planners are pretty good at this, but poor cardinality estimates (stale stats) can cause bad choices. Force an index with hints if needed: `USE INDEX (idx_name)` or `WITH (INDEX=idx_name)` (syntax varies by DB)."
+    },
+    {
+      "task": "index-scan",
+      "arm": "terse",
+      "rep": 2,
+      "loop_output_tokens": 626,
+      "num_turns": 1,
+      "error": null,
+      "result": "A SQL database chooses between an index and a full table scan based on cost estimation:\n\n**Full Table Scan:**\n- Reads every row in the table sequentially\n- Used when:\n  - No index exists on the query column\n  - The index would filter out very few rows (high cardinality return set)\n  - The table is small (sequential reads are fast for small datasets)\n  - A query selects a large percentage of rows (e.g., `WHERE active = true` with 90% active rows)\n  - The WHERE clause can't use available indexes (e.g., functions applied to indexed columns: `WHERE UPPER(name) = 'FOO'`)\n\n**Index Lookup:**\n- Uses the index tree to find rows directly\n- Used when:\n  - An index exists on the query column\n  - The index is selective enough to justify the lookup cost (low cardinality return set)\n  - The query can use the index effectively (exact matches, ranges, prefix matches)\n  - The table is large\n\n**The Trade-off:**\nThe optimizer estimates the cost of each approach:\n- Sequential scan cost = table size × rows per disk block\n- Index scan cost = index tree depth + random lookups + table fetches\n\nIf estimated index cost < scan cost, use the index. Otherwise, scan.\n\n**Key factors:**\n- **Selectivity**: How many rows the WHERE clause filters. Low selectivity (filters lots of rows) favors indexes; high selectivity (keeps most rows) may favor scans\n- **Table size**: Small tables often scan; large tables usually index\n- **Index design**: Multi-column indexes, covering indexes, and partial indexes affect whether an index can be used efficiently\n- **Statistics**: The optimizer relies on table/index statistics to estimate row counts; stale stats lead to bad choices\n\nMost databases let you check the query plan (EXPLAIN/ANALYZE) to see which path was chosen."
+    },
+    {
+      "task": "index-scan",
+      "arm": "terse",
+      "rep": 3,
+      "loop_output_tokens": 566,
+      "num_turns": 1,
+      "error": null,
+      "result": "A SQL database chooses between an index and a full table scan based on cost estimation. The query planner compares the estimated cost of each approach and picks the cheaper one.\n\n**Full table scan** happens when:\n- No index exists on the filter columns\n- The index exists but the query planner estimates scanning the table directly is faster (usually when returning a large percentage of rows)\n- The index wouldn't help (e.g., `WHERE column IS NULL` with no special null index)\n- The query is complex enough that using the index would require multiple steps\n\n**Index is used** when:\n- An index exists on the filter columns\n- The planner estimates the index will return fewer rows than a full scan\n- The cost of index lookup + row retrieval is lower than scanning every row\n- Typically this happens when filtering for a small percentage of the table (rough rule: under 10-20% depending on the database)\n\n**The threshold depends on:**\n- **Table size** — larger tables favor indexes for selective queries\n- **Row selectivity** — how many rows match your filter (more selective = more likely to use index)\n- **Clustered vs non-clustered** — clustered indexes (where the index *is* the table) have different tradeoffs\n- **Statistics** — the planner uses table statistics to estimate row counts; stale stats lead to bad choices\n\n**Example:**\n```sql\n-- Likely uses index on user_id\nSELECT * FROM users WHERE user_id = 42;\n\n-- Likely full table scan (too many rows)\nSELECT * FROM users WHERE active = true;\n\n-- Depends on data distribution\nSELECT * FROM users WHERE created_at > '2025-01-01';\n```\n\nYou can check the query plan with `EXPLAIN` (PostgreSQL), `EXPLAIN PLAN` (Oracle), or `SET STATISTICS IO ON` (SQL Server) to see what actually happens. If the planner makes a bad choice, you can force an index with hints (`USE INDEX`, `WITH (INDEX=...)`, etc.) or rebuild statistics."
+    },
+    {
+      "task": "index-scan",
+      "arm": "terse",
+      "rep": 4,
+      "loop_output_tokens": 669,
+      "num_turns": 1,
+      "error": null,
+      "result": "A database uses an **index** when:\n\n1. **The query references indexed columns** — The columns in the WHERE clause, JOIN conditions, or ORDER BY are indexed.\n2. **The index is selective** — It filters down to a small portion of the table (typically <10-15% of rows, though this varies by database).\n3. **The query optimizer estimates it's cheaper** — The database calculates that seeking through an index + retrieving rows beats scanning the whole table. Index lookups have overhead, so for very large result sets, a scan may be faster.\n4. **The query plan favors it** — Compound factors like available indexes, table statistics, join order, and cost estimates influence the choice.\n\nA database uses a **full table scan** when:\n\n1. **No useful index exists** — The columns queried aren't indexed.\n2. **The index is non-selective** — The index matches most/all rows anyway (e.g., filtering on a boolean column with 50/50 distribution), so scanning is faster.\n3. **The result set is large** — Even with an index, if you're returning 80% of the table, a scan is cheaper than random seeks.\n4. **The query is unindexable** — Certain operators prevent index use: `LIKE '%pattern'`, range queries on non-leftmost index columns, type mismatches, or expressions like `WHERE YEAR(date_col) = 2025`.\n5. **Table is small** — Tiny tables are faster to scan entirely than to index-seek.\n\n**Example:**\n\n```sql\n-- Index on (user_id) exists\nSELECT * FROM orders WHERE user_id = 42;  -- INDEX SEEK (selective)\n\nSELECT * FROM orders WHERE user_id = 42 OR user_id = 43;  -- May use index (depends on cardinality)\n\nSELECT * FROM orders WHERE status IN ('pending', 'shipped');  -- FULL SCAN (status is 70% of rows)\n\nSELECT * FROM orders WHERE YEAR(created_at) = 2025;  -- FULL SCAN (expression prevents index use)\n```\n\nThe optimizer chooses based on **cost estimation**, which uses table statistics (row count, distinct values, distribution). You can force behavior with hints (`USE INDEX`, `FORCE INDEX` in MySQL, or query hints in other DBs), but the optimizer's choice is usually right."
+    },
+    {
+      "task": "index-scan",
+      "arm": "flint",
+      "rep": 0,
+      "loop_output_tokens": 708,
+      "num_turns": 1,
+      "error": null,
+      "result": "Database picks an index when it's **cheaper** than reading the whole table. The query planner estimates: cost of index lookup + fetching matching rows vs cost of scanning every row. Index wins when the estimate is lower.\n\n**Index used when:**\n- Query filters on an indexed column with **low selectivity** (few matching rows). \"WHERE user_id = 5\" on a million-row table: index is faster because it skips 99.9% of rows.\n- Index is **available and well-maintained**. A fragmented or stale index (especially in older databases) can be slower than a scan.\n- **Query is selective enough** to cross the planner's threshold. With \"WHERE active = true\" on a table where 90% of rows are active, scanning is faster than index lookups on each one.\n\n**Full table scan used when:**\n- No suitable index exists on the filter columns.\n- Index exists but selectivity is **too high** — filtering returns most of the table. \"WHERE active = true\" where 90% match: scan wins.\n- Planner estimates the index seeks + row fetches cost more than one sequential scan. Modern planners are aggressive about this.\n- Query requests **all or most columns** and the index doesn't cover them, forcing index lookup + table lookup for each row (extra I/O).\n\n**Key insight:** selectivity is the hinge. An index on a boolean column helps only when one value is rare. An index on a low-cardinality column (few distinct values) often doesn't help. An index on a high-cardinality column (many distinct values, like email) almost always does.\n\nRun `EXPLAIN` or `EXPLAIN ANALYZE` (PostgreSQL/MySQL) to see what your planner chose and why."
+    },
+    {
+      "task": "index-scan",
+      "arm": "flint",
+      "rep": 1,
+      "loop_output_tokens": 881,
+      "num_turns": 1,
+      "error": null,
+      "result": "**Query optimizer compares estimated costs. Scan reads every row sequentially; index seeks to matching rows via lookup structure. Index wins if filtering is selective enough that (seek cost + random I/O to fetch rows) < (sequential scan of entire table).**\n\nDecision factors:\n\n**Selectivity** — the percentage of rows matching the WHERE clause.\n- Scan favored: >15–20% of rows. Sequential I/O on a scan is fast; random jumps for each index match become expensive overhead.\n- Index favored: <5% of rows. Seek into index + tuple lookups is cheaper than reading every row.\n- Gray zone: 5–15%. Planner's cardinality estimates determine the call; slight mis-estimates flip the choice.\n\n**Index existence & stats.**\n- No index on the column → scan forced (nothing to seek into).\n- Stale statistics → planner guesses wrong selectivity and picks the wrong plan.\n- Covering index (includes all columns needed in the SELECT) → index preferred because it avoids the table entirely.\n\n**Table size.**\n- Small table: scan overhead is negligible; index setup/seek cost may not repay.\n- Large table: index saves reading millions of irrelevant rows.\n\n**Query shape.**\n- `WHERE id = 5` on an indexed column → index seek (one row, ultra-selective).\n- `WHERE status = 'active'` on a bool/enum → scan if half the rows match (50% selectivity kills the index).\n- `WHERE col LIKE 'prefix%'` → index on col can range-seek; `LIKE '%suffix'` cannot (scan or full-text index).\n- `ORDER BY indexed_col` → index can deliver presorted results (avoid sort).\n\n**Planner override.** Optimizer hints (`USE INDEX`, `FORCE INDEX`, `/*+ INDEX(...) */` depending on dialect) let you override the planner's choice if it's wrong."
+    },
+    {
+      "task": "index-scan",
+      "arm": "flint",
+      "rep": 2,
+      "loop_output_tokens": 608,
+      "num_turns": 1,
+      "error": null,
+      "result": "Query optimizer compares two costs: scanning the index + fetching matched rows versus scanning the entire table. Index wins when the selectivity is high enough that the cost of index lookups beats reading every row.\n\n**Index chosen when:**\n- Query has a `WHERE` clause that matches a low percentage of rows (typically <5-10%, varies by DB and table size)\n- An index exists on the filtered columns\n- Optimizer estimates index navigation + random page fetches costs less than sequential table scan\n\n**Full table scan chosen when:**\n- Query returns a high percentage of rows (most DBs switch over ~30-40% selectivity)\n- No useful index exists for the WHERE conditions\n- Table is small enough that scanning it beats index overhead\n- Query needs all columns and table is narrow (reading everything is cheaper than jumping around)\n- Statistics are stale and optimizer makes a bad guess\n\n**The math:** index scan = (log cost to find first match) + (random I/O × matching rows). Full scan = sequential read of whole table. Sequential I/O beats random I/O per byte, but if you're reading 80% of the table anyway, randomness doesn't save you.\n\n**Factors affecting the choice:**\n- Selectivity of the WHERE clause (% of rows matching)\n- Whether index is clustered (reordered table) vs nonclustered (separate structure)\n- Column width and table size\n- Query needing all columns vs just index-covered columns\n- Database statistics freshness\n\nYou can see the optimizer's choice via `EXPLAIN` (PostgreSQL/MySQL) or `EXPLAIN PLAN` (Oracle) and tune by adding/removing indexes or rewriting the query to improve selectivity."
+    },
+    {
+      "task": "index-scan",
+      "arm": "flint",
+      "rep": 3,
+      "loop_output_tokens": 606,
+      "num_turns": 1,
+      "error": null,
+      "result": "A database chooses based on **cost estimation**: it calculates which approach will read fewer pages, then picks the cheaper operation.\n\n**Full table scan** — reads every row sequentially:\n- Fast for small tables (disk I/O is linear, no index lookup overhead).\n- Fast when the query returns a large fraction of rows (indexing overhead dominates).\n- Used when no suitable index exists, or the optimizer estimates you're fetching >25-40% of rows (varies by DB, table size, cache state).\n\n**Index** — jumps directly to matching rows via the index structure:\n- Fast when filtering on indexed columns AND the result set is small (few rows).\n- Costs extra: index lookup + random I/O to fetch actual rows. Worth it only if you skip enough rows.\n- Used when the optimizer estimates the index filters to <5-15% of rows (rough; depends on index selectivity and page size).\n\n**The decision point:** query predicate + estimated row count. If `WHERE id = 123` and `id` has a unique index, the optimizer picks the index immediately. If `WHERE status = 'active'` and status is low-cardinality (many rows share the value), a table scan often wins because fetching 70% of rows via index lookups is slower than one linear pass.\n\n**Visibility:** run `EXPLAIN` (PostgreSQL, MySQL) or `EXPLAIN PLAN` (Oracle) to see the optimizer's choice and its cost estimate. High-cost table scans on large tables often signal a missing index; low-cardinality predicates often can't use indexes efficiently regardless.\n\nThe optimizer isn't always right — if you know a better path, you can force index use with hints, but that's a last resort."
+    },
+    {
+      "task": "index-scan",
+      "arm": "flint",
+      "rep": 4,
+      "loop_output_tokens": 630,
+      "num_turns": 1,
+      "error": null,
+      "result": "A database chooses between an index and a full table scan based on **cost estimation**. The query optimizer compares the predicted cost of each approach and picks the cheaper one.\n\n**Full table scan wins when:**\n- The query needs most/all rows (e.g., `SELECT * FROM users` with no WHERE clause)\n- The WHERE condition is non-selective (matches many rows: `WHERE active = true` on a table where 80% are active)\n- The index lookup + row retrieval would cost more than scanning the table sequentially\n- No suitable index exists for the condition\n\n**Index scan wins when:**\n- The condition is selective (filters to a small fraction of rows: `WHERE id = 42`)\n- An index exists on the WHERE/JOIN/ORDER BY columns\n- The optimizer estimates: index lookup cost + fetching filtered rows < full table scan cost\n\n**The actual calculation:**\nOptimizer estimates: `(index depth + matching leaf pages + row fetches) < (total table pages)`. On a 1M-row table where your condition matches 100 rows, an index is nearly always cheaper. On the same table matching 900k rows, a full scan is cheaper (one pass through disk beats jumping to 900k scattered rows).\n\n**Key variables:**\n- **Selectivity:** what % of rows the condition matches. Below ~5-10% (database-dependent), indexes usually win.\n- **Index column order:** if the index leading column isn't in your WHERE clause, the optimizer can't use it efficiently.\n- **Table stats:** the optimizer relies on cardinality estimates (row counts, distinct values). Stale stats cause wrong choices.\n- **I/O pattern:** sequential reads (table scan) are faster per byte than random reads (index + fetch), so the threshold shifts based on disk type.\n\n**To see the plan:** `EXPLAIN` (PostgreSQL/MySQL) or `EXPLAIN PLAN` (Oracle) shows which path the optimizer chose and why. If it's scanning when you expected an index, check: does the index exist, is the leading column in the WHERE clause, are stats current?"
+    }
+  ]
+}

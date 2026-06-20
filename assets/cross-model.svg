@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 290" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif" role="img" aria-label="flint pooled output reduction by model: bigger on more capable models"><style>.lbl{fill:#6b7280;font-size:13px}.sub{fill:#6b7280;font-size:13px;font-weight:700}.fv{fill:#d4500f;font-size:13px;font-weight:700}.cap{fill:#9aa0a6;font-size:11px}</style>
+<text x="20" y="26" class="sub" font-size="15">Pooled output reduction vs baseline, by model</text>
+<text x="20" y="44" class="cap">flint vs no skill, normalized across 7 tasks. the benefit scales with model capability.</text>
+<text x="158" y="83" text-anchor="end" class="lbl">Opus 4.8 <tspan class="cap">(n=10)</tspan></text><rect x="168" y="66" width="360" height="26" rx="4" fill="#d4500f"/><text x="536" y="83" class="fv">−62%</text>
+<text x="158" y="129" text-anchor="end" class="lbl">Haiku 4.5 <tspan class="cap">(n=20)</tspan></text><rect x="168" y="112" width="244" height="26" rx="4" fill="#d4500f"/><text x="420" y="129" class="fv">−42%</text>
+<text x="158" y="175" text-anchor="end" class="lbl">qwen2.5-coder 3b <tspan class="cap">(n=10)</tspan></text><rect x="168" y="158" width="180" height="26" rx="4" fill="#b4b9c0"/><text x="356" y="175" class="cap">−31%  (n.s.)</text>
+<text x="158" y="221" text-anchor="end" class="lbl">qwen2.5-coder 1.5b <tspan class="cap">(n=10)</tspan></text><rect x="168" y="204" width="0" height="26" rx="4" fill="#b4b9c0"/><text x="176" y="221" class="cap">≈0%  (n.s.)</text>
+<text x="20" y="268" class="cap">orange = significant, every gate passed (Mann-Whitney p&lt;0.05 on all 7 tasks).</text>
+<text x="20" y="282" class="cap">grey = not significant; small local models don't follow the rules, prose fidelity fails. flint needs an instruction-follower.</text></svg>

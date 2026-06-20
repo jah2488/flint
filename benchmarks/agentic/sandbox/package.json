@@ -1,0 +1,12 @@
+{
+  "name": "flint-agentic-sandbox",
+  "version": "1.0.0",
+  "type": "module",
+  "license": "MIT",
+  "private": true,
+  "description": "Small realistic task API used as the agentic benchmark sandbox for flint. Zero dependencies; runs on Node >= 23 via built-in TypeScript type-stripping and node:test.",
+  "scripts": {
+    "test": "node --test",
+    "start": "node src/server.ts"
+  }
+}
