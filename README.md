@@ -63,19 +63,19 @@ window that also saw lower load; the cache's contribution is unproven until an e
 ### As a Claude Code plugin
 
 ```bash
-# from a local clone
-/plugin marketplace add /path/to/flint
+# straight from GitHub, no clone needed
+/plugin marketplace add jah2488/flint
 /plugin install flint@flint
 ```
 
-Or point the marketplace at the repo URL once it's hosted. Installed this way, a `SessionStart`
-hook flips flint on automatically each session (it injects a one-line activation note, not the
-whole skill, so it stays cheap). Turn it off any time with "stop flint".
+Installed this way, a `SessionStart` hook flips flint on automatically each session (it injects a
+one-line activation note, not the whole skill, so it stays cheap). Turn it off any time with "stop
+flint".
 
 ### As a plain skill (any Claude Code)
 
 ```bash
-git clone <repo> ~/Projects/flint
+git clone https://github.com/jah2488/flint ~/Projects/flint
 ln -s ~/Projects/flint/skills/flint ~/.claude/skills/flint
 ```
 
