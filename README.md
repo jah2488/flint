@@ -99,6 +99,50 @@ bend: input validation, error handling, security, and accessibility are never co
 skipped, at any intensity. Terseness also auto-suspends for security warnings, destructive-action
 confirmations, and anywhere compression would make an instruction ambiguous.
 
+## Status line indicator (optional)
+
+Show the live flint level in your status line: `✦ flint:ultra` (glyph colored by intensity,
+green full/lite, amber ultra, red feral, dim when off).
+
+This one is opt-in and takes two small edits to your own config. Claude Code doesn't let a plugin
+add to your status line (it's a single user-level setting), and flint won't run a per-prompt hook
+on everyone for a cosmetic segment. So flint ships the two scripts and you wire them up if you want
+the indicator. Requires `jq`.
+
+Copy the scripts out of the installed plugin into your `~/.claude`:
+
+```sh
+mkdir -p ~/.claude/hooks
+cp ~/.claude/plugins/cache/flint/flint/*/src/hooks/flint-mode.sh        ~/.claude/hooks/
+cp ~/.claude/plugins/cache/flint/flint/*/src/statusline/flint-segment.sh ~/.claude/
+```
+
+**1. Track the mode.** Add a `UserPromptSubmit` hook in `~/.claude/settings.json` (it merges with
+any hooks you already have). This records the level per session; it stays silent and always exits 0:
+
+```json
+"UserPromptSubmit": [
+  { "hooks": [ { "type": "command", "command": "bash ~/.claude/hooks/flint-mode.sh" } ] }
+]
+```
+
+**2. Show the segment.** If you have no status line yet, point it straight at the segment script:
+
+```json
+"statusLine": { "type": "command", "command": "bash ~/.claude/flint-segment.sh" }
+```
+
+If you already have a status line, splice the segment into your script (it reads the same stdin):
+
+```sh
+input=$(cat)                                              # most scripts already do this
+FLINT=$(printf '%s' "$input" | bash ~/.claude/flint-segment.sh)
+# ...then include "$FLINT" in your final output line, with whatever separator you use.
+```
+
+The segment prints nothing when flint isn't installed, so it degrades cleanly if you later remove
+the plugin. Level resets to `full` each new session, mirroring flint's own behavior.
+
 ---
 
 ## The four edges in detail
